@@ -1,0 +1,7 @@
+; $Id:                                        
+name = Shortcode Basic Tags                                                                             
+description = Provides basic shortcode tags like highlight, dropcap, etc.                                                       
+package = Shortcode                                                                                              
+core = 6.x
+dependencies[] = filter
+dependencies[] = shortcode
