@@ -47,10 +47,10 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
       btns = {};
       btns[Drupal.t('Insert shortcode')] = function () {
 
-        var shortcode = dialogdiv.contents().find('#edit-insert option:selected').val();
+        var shortcode = dialogdiv.contents().find('#edit-shortcode option:selected').val();
         var editor_id = instanceId;
 
-        shortcode = '[' + shortcode + ']';
+        shortcode = '[' + shortcode + '][/' + shortcode + ']';
         Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(shortcode, editor_id);
         jQuery(this).dialog("close");
 
