@@ -1,7 +1,6 @@
-; $Id:
 name = Shortcode Embed Contents Tags
 description = Provides a shortcode tags for embedding a node content (node, blog, views, etc.)
 package = Shortcode
-core = 6.x
+core = 7.x
 dependencies[] = filter
 dependencies[] = shortcode

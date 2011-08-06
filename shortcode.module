@@ -6,10 +6,7 @@
  *
  * correct element cascading
  *
- *
- *
  */
-
 
 /**
  * Build a list of all shortcodes (for filter).
@@ -17,183 +14,78 @@
  *
  * From filter.module
  */
-function shortcode_list_all() {
+function shortcode_list_all() { // Should we cache this?
   $shortcodes = array();
-  foreach (module_list() as $module) {
-    $list = module_invoke($module, 'shortcodes', 'list');
-    if (isset($list) && is_array($list)) {
-      foreach ($list as $name => $descr) {
-        $shortcodes[$name] = (object)array('module' => $module, 'descr' => $descr);
-      }
-    }
-  }
-
+  $shortcodes += module_invoke_all('shortcode_info');
   return $shortcodes;
 }
 
-/**
- * Build a list of all shortcodes (for filter).
- * Calls the shortcode hook with the tips parameter on all module
- * From filter.module
- */
-function shortcode_tips_all($format, $long = FALSE) {
-  // calls the shortcode hook with the tips parameter on all module
-  $tips = '';
-  foreach (module_list() as $module) {
-    $tips .= module_invoke($module, 'shortcodes', 'tips', $format, $long);
+function shortcode_list_all_enabled($format) { 
+  $shortcodes = shortcode_list_all();
+  
+  /*
+  foreach($filter->settings as $name => $enabled) { // Run through all shortcodes
+    if($enabled && $shortcodes[$name]['tips callback'] && function_exists($shortcodes[$name]['tips callback']))
+      $tips .= call_user_func_array($shortcodes[$name]['tips callback'], $args);
   }
-
-  return $tips;
+  */
 }
 
 /**
-* Implementation of hook_filter().
+* Implementation of hook_filter_info().
 */
-function shortcode_filter($op, $delta = 0, $format = -1, $text = '') {
-  switch ($op) {
-    case 'list':
-    return array(
-        0 => t('Shortcodes'),
-        1 => t('Shortcodes - html corrector'),
-      );
-    break;
-
-  case 'description':
-    switch ($delta) {
-      case 1:
-        return t('Shortcodes html corrector');
-      break;
-
-      case 0:
-      default:
-        return t('Shortcodes like in WP');
-      break;
-    }
-  break;
-
-  case 'settings':
-    switch ($delta) {
-      case 1:
-        return '';
-      break;
-
-      case 0:
-      default:
-        // list all shortcodes, enable/disable, and cache value.
-        return _shortcode_settings_form($format);
-      break;
-    }
-
-  break;
-
-  case 'no cache':
-    // Do not cache the output.
-
-    // TODO: build a shortcode list with cache options
-
-    return TRUE;
-    break;
-
-  case 'prepare':
-    // We're a simple filter and have no preparatory needs.
-
-    return $text;
-    break;
-  case 'process':
-    switch ($delta) {
-      case 1:
-        // run shortcodes html corrector
-        return _shortcode_postprocess_text($text);
-      break;
-
-      // runs shortcodes
-      case 0:
-      default:
-        return _shortcode_process($text, $format);
-      break;
-    }
-    break;
-  default:
-    return $text;
-  }
-} // shortcodes filter
+function shortcode_filter_info() {
+  $filters['shortcode'] = array(
+    'title' => t('Shortcodes'), 
+    'description' => t('Shortcodes like in WP.'), 
+    'process callback' => '_shortcode_process', 
+    'settings callback' => '_shortcode_settings_form',
+    'tips callback' => '_shortcode_filter_tips',
+    'default settings' => array(),
+  );
+  $filters['shortcode_text'] = array(
+    'title' => t('Shortcodes - html corrector'), 
+    'description' => t('Shortcodes html corrector.'),
+    'process callback' => '_shortcode_postprocess_text',
+    'default settings' => array(),
+  );
+ 
+  return $filters;
+}  
 
 /**
- * Implementation of hook_filter_tips().
- */
-function shortcode_filter_tips($delta, $format, $long = FALSE) {
-  static $sent = array();
+* Filter tips callback
+*/
+function _shortcode_filter_tips($filter, $format, $long = FALSE) {
+  $shortcodes = shortcode_list_all();
+  $tips = '';
 
-  if (isset($sent[$format])) {
-    // do not send on the html corrector
-    return '';
+  foreach($filter->settings as $name => $enabled) { // Run through all shortcodes
+    if($enabled && $shortcodes[$name]['tips callback'] && function_exists($shortcodes[$name]['tips callback']))
+      $tips .= call_user_func_array($shortcodes[$name]['tips callback'], $args);
   }
-  $tips = shortcode_tips_all($format, $long);
-  if ($tips) {
-    $tips = '<fieldset><legend>' . t('Shortcodes') . '</legend><div>' . $tips . '</div></fieldset>';
-  }
-  $sent[$format] = TRUE;
+
   return $tips;
 }
 
 /**
- *
- * Base form elements of the all shortcode options
- *
+ * Settings form
  */
-function _shortcode_settings_form($format) {
-  $form['shortcodes_settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Shortcodes'),
-    '#collapsible' => TRUE,
-  );
-
+function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaults) {
+  $filter->settings += $defaults;
   $shortcodes = shortcode_list_all();
 
-  foreach ($shortcodes as $name => $item) {
-    $n = 'shortcode_enabled_' . $name . '_in_' . $format;
-    $form['shortcodes_settings'][$n] = array(
+  foreach ($shortcodes as $key => $shortcode) {
+    $settings[$key] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable %name shortcode', array('%name' => $name)),
-      '#default_value' => variable_get($n, 1),
+      '#title' => t('Enable %name shortcode', array('%name' => $shortcode['title'])),
+      '#default_value' => $filter->settings[$key],
       '#description' => 'Enable or disable this shortcode in this input format',
     );
   }
 
-  return $form;
+  return $settings;
 }
-
-/**
- *
- * shortcodes hook implementation
- * @param $op string - the operator - one of list, settings or tips
- * @param $format - the filter format index
- * @param $long
- */
-
-function shortcode_shortcodes($op, $format = 1, $long = FALSE) {
-  switch ($op) {
-    case 'list':
-      // array indexed by the shortcode name
-      return array(
-        'random'  => 'Code replacey by random text', // use t()!
-      );
-    break;
-
-    // TODO: special settings
-    case 'settings':
-    break;
-
-    case 'tips':
-      $output = shortcode_shortcode_random_tip($format, $long);
-      return $output;
-    break;
-
-    default:
-    break;
-  }
-
-} // shortcode_shortcodes()
 
 /**
  * Tags cache
@@ -211,50 +103,25 @@ function _shortcode_tags($tags = NULL) {
   return $shortcodes;
 }
 
-function shortcode_shortcode_is_enabled($name, $format) {
-  $n = 'shortcode_enabled_' . $name . '_in_' . $format;
-  return variable_get($n, 1);
-}
-
 /**
  * Process the shortcodes according to the text and the text format.
- *
  */
-function _shortcode_process($text, $format) {
+function _shortcode_process($text, $filter) {
   $shortcodes = shortcode_list_all();
-  $enabled_names = array();
-  foreach ($shortcodes as $name => $item) {
-
-    $shortcodes[$name]->enabled = shortcode_shortcode_is_enabled($name, $format);
-
-    if ($shortcodes[$name]->enabled) {
-      $enabled_names[] = $name;
-      $shortcodes[$name]->function = $shortcodes[$name]->module . '_shortcode_' . $name;
+  
+  foreach($filter->settings as $name => $value) { // run through all shortcodes
+    if($value && $shortcodes[$name]['process callback']) {
+      $shortcodes_enabled[$name]->enabled = TRUE;
+      $shortcodes_enabled[$name]->function = $shortcodes[$name]['process callback'];
     }
   }
 
-  if (! $enabled_names) {
+  if (!$shortcodes_enabled) {
     return $text;
   }
-  // remove the p tags around the lines whitch contains shortcodes only
-  //$text = preg_replace('!<p>(\[.*?\])<\/p>!is', '\\1', $text);
-
-  // we have to insert a special chars between the shortcode elements because
-  // without it it is not works korrectly
-  //$text = preg_replace('!<p>\s*(\[.*?\])\s*<\/p>!is', '#!#\\1', $text);
-  //$text = preg_replace('!(\[.*?\])!is', '#!#\\1', $text);
 
   // save the shortcodes
-  _shortcode_tags($shortcodes);
-  //dpr($shortcodes);
-
-  // old, wp way
-  //$tag_regexp = _shortcode_get_shortcode_regex($enabled_names);
-
-  //$text = preg_replace_callback('/' . $tag_regexp . '/s', '_shortcode_process_tag', $text);
-  //dpr('after process:');
-  //dpr($text);
-  //$text = preg_replace('/#!#/is', '', $text);
+  _shortcode_tags($shortcodes_enabled);
 
   // imroved version - recursive processing - embed tags within tags supported!
   $chunks = preg_split('!(\[.*?\])!', $text, -1,  PREG_SPLIT_DELIM_CAPTURE  );
@@ -262,11 +129,6 @@ function _shortcode_process($text, $format) {
   //dpr($chunks);
   $heap = array();
   $heap_index = array();
-  // array_shift — Shift an element off the beginning of array
-  // mixed array_shift  ( array &$array  )
-
-  // array_unshift — Prepend one or more elements to the beginning of an array
-  // int array_unshift  ( array &$array  , mixed $var  [, mixed $...  ] )
 
   foreach ($chunks as $c) {
     if (!$c) {
@@ -329,7 +191,6 @@ function _shortcode_process($text, $format) {
               ''
             );
             $str = _shortcode_process_tag($m);
-            //dpr($str);
             array_unshift($heap_index, '_string_');
             array_unshift($heap, $str);
             $found = TRUE;
@@ -348,8 +209,6 @@ function _shortcode_process($text, $format) {
           foreach($process_heap_index as $val) {
             array_unshift($heap_index, $val);
           }
-          //array_unshift($heap_index, '_string_');
-          //array_unshift($heap, 'notfound: ' . $closing_tag . ':' . implode('', $process_heap));
         }
 
       }
@@ -372,11 +231,8 @@ function _shortcode_process($text, $format) {
 
   }
 
-  return( implode('', array_reverse($heap)));
-  //d(array_reverse($heap));
-
-  //return $text;
-} // _shortcode_process($text, $format)
+  return(implode('', array_reverse($heap)));
+}
 
 /*
  * Html corrector for wysiwyg editors
@@ -384,7 +240,7 @@ function _shortcode_process($text, $format) {
  * Correncting p elements around the divs. No div are allowed in p so remove them.
  *
  */
-function _shortcode_postprocess_text($text) {
+function _shortcode_postprocess_text($text, $filter) {
   //return $text;
   $patterns = array(
     '|#!#|is',
@@ -451,7 +307,7 @@ function _shortcode_process_tag($m) {
      return $m[4];
   }
   return '';
-} // _shortcode_process_tag()
+}
 
 /**
  * Retrieve all attributes from the shortcodes tag.
@@ -487,7 +343,7 @@ function _shortcode_parse_attrs($text) {
     $atts = ltrim($text);
   }
   return $atts;
-} // _shortcode_parse_attrs
+}
 
 /**
  * Retrieve the shortcode regular expression for searching.
@@ -611,28 +467,4 @@ function shortcode_shortcode_random($attrs, $text) {
   }
 
   return $text;
-} // shortcode_shortcode_random()
-
-/**
- * Provides a random tag tip
- *
- * @param $format
- * @param $long
- */
-function shortcode_shortcode_random_tip($format, $long) {
-  $output = '';
-  if (shortcode_shortcode_is_enabled('random', $format)) {
-    $output = '<p><strong>[random (length=X) /]</strong>';
-    if ($long) {
-      $output .= ' insert a random text with length between 0-99 or if length omitted, 8.</p>';
-    }
-    else {
-      $output .= ' inserts a random text with max length 99. Default length is 8.</p>';
-    }
-
-  }
-
-  return $output;
 }
-
-
