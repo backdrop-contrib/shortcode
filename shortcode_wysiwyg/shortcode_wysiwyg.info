@@ -1,0 +1,5 @@
+name = Shortcode wysiwyg EXPERIMENTAL
+description = "Shortcode wysiwyg integration"
+core = 7.x
+package = Shortcode
+dependencies[] = shortcode
