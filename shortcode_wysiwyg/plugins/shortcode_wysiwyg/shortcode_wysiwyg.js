@@ -29,6 +29,14 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
    *   The ID of the current editor instance.
    */
   invoke: function(data, settings, instanceId) {
+    /*
+         if (data.format == 'html') {
+       var content = this._getPlaceholder(settings);
+     }
+     else {
+       var content = '<!--shortcode_wysiwyg-->';
+     }
+    */
     Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);    
   },
   
@@ -50,7 +58,7 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
         var shortcode = dialogdiv.contents().find('#edit-shortcode option:selected').val();
         var editor_id = instanceId;
 
-        shortcode = '[' + shortcode + '][/' + shortcode + ']';
+        shortcode = '[' + shortcode + ']'+ data.content +'[/' + shortcode + ']';
         Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(shortcode, editor_id);
         jQuery(this).dialog("close");
 
@@ -81,7 +89,7 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
   insertIntoEditor: function (shortcode, editor_id) {
     Drupal.wysiwyg.instances[editor_id].insert(shortcode);
   },
-
+  
   /**
    * Prepare all plain-text contents of this plugin with HTML representations.
    *

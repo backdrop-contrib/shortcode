@@ -86,7 +86,7 @@ function shortcode_basic_tags_theme() {
       'variables' => array('text' => '', 'author' => FALSE, 'class' => 'quote'),
     ),
     'shortcode_img' => array(
-      'variables' => array('src' => '', 'alt' => '', 'class' => 'quote'),
+      'variables' => array('src' => '', 'alt' => '', 'class' => 'img'),
     ),
     'shortcode_dropcap' => array(
       'variables' => array('text' => '', 'class' => 'dropcap'),
@@ -236,7 +236,7 @@ function shortcode_basic_tags_quote_options_submit($form, &$form_state) {
 function shortcode_basic_tags_shortcode_quote($attrs, $text) {
   extract(shortcode_attrs(array(
       'class' => 'quote',
-      'author' => 'author',
+      'author' => '',
       ), $attrs));
 
   $class = shortcode_add_class($class, 'quote');
@@ -247,10 +247,10 @@ function shortcode_basic_tags_shortcode_quote($attrs, $text) {
 function theme_shortcode_quote($vars) {
   $output = $vars['text'];
   
-  if($vars['author']) // Add author
+  if(!empty($vars['author'])) // Add author
     $output = '<span class="quote-author">'. t('%name wrote:', array('%name' => $vars['author'])) .'</span>'. $output;
 
-  $output = '<span class="' . $vars['class'] . '">' . $output . '</span>';
+  $output = '<span class="' . check_plain($vars['class']) . '">' . $output . '</span>';
   return $output;
 }
 
@@ -291,19 +291,19 @@ function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
 
 function shortcode_basic_tags_shortcode_img($attrs, $text) {
   extract(shortcode_attrs(array(
-      'class' => 'quote',
-      'alt' => 'alt',
+      'class' => 'img',
+      'alt' => '',
       ), $attrs));
 
-  $class = shortcode_add_class($class, 'quote');
+  $class = shortcode_add_class($class, 'img');
 
   return theme('shortcode_img', array('src' => $text, 'alt' => $alt, 'class' => $class));
 }
 
 function theme_shortcode_img($vars) {
-  $alt = ($vars['alt']) ? '  alt="'. $vars['alt'] .'" ' : '';
+  //$alt = (!empty($vars['alt'])) ? ' alt="'. $vars['alt'] .'" ' : '';
   
-  return '<img src="'. $vars['src'] .'" class="' . $vars['class'] . '" class="' . $alt . '"/>';
+  return '<img src="'. url($vars['src']) .'" class="' . check_plain($vars['class']) . '" alt="' . check_plain($alt) . '"/>';
 }
 
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
