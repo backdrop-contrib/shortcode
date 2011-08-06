@@ -10,6 +10,7 @@ function shortcode_basic_tags_shortcode_info() {
     'description' => t('Replace a given text formatted like a quote.'), 
     'process callback' => 'shortcode_basic_tags_shortcode_quote', 
     //'settings callback' => '_shortcode_settings_form', TODO
+    'attributes callback' => "shortcode_basic_tags_quote_attributes",
     'tips callback' => 'shortcode_basic_tags_shortcode_quote_tip',
     'default settings' => array(),
   );
@@ -64,7 +65,7 @@ function shortcode_basic_tags_shortcode_info() {
   $shortcodes['link'] = array(
     'title' => t('Link'), 
     'description' => t('Makes an aliased link to the given path.'), 
-    'process callback' => 'shortcode_basic_tags_shortcode_link', 
+    'process callback' => 'shortcode_basic_tags_shortcode_link',
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_link_tip',
     'default settings' => array(),
@@ -212,6 +213,18 @@ function shortcode_basic_tags_shortcode_dropcap_tip($format, $long) {
   }
 
   return $output;
+}
+
+function shortcode_basic_tags_quote_attributes($form, &$form_state) {
+  $form['class'] = array(
+    '#title' => t('class'), 
+    '#type' => 'textfield', 
+  );
+    
+  return $form;
+}
+
+function shortcode_basic_tags_quote_options_submit($form, &$form_state) {
 }
 
 /**

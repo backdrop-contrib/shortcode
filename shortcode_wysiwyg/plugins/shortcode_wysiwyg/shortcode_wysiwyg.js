@@ -35,10 +35,9 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
   
   insert_form: function (data, settings, instanceId) {
     form_id = Drupal.settings.shortcode_wysiwyg.current_form;
-
     // Location, where to fetch the dialog.
-    var aurl = Drupal.settings.basePath + 'index.php?q=shortcode_wysiwyg/redactie/' + form_id;
-    dialogdiv = jQuery('<div id="token-insert-dialog"></div>');
+    var aurl = Drupal.settings.basePath + 'index.php?q=shortcode_wysiwyg/'+ Drupal.wysiwyg.instances[instanceId].format +'/' + form_id;
+    dialogdiv = jQuery('<div id="shortcode-insert-dialog"></div>');
     dialogdiv.load(aurl + " .content #shortcode-wysiwyg-form", function(){
       var dialogClose = function () {
         try {
@@ -46,13 +45,13 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
         } catch (e) {};
       };
       btns = {};
-      btns[Drupal.t('Insert token')] = function () {
+      btns[Drupal.t('Insert shortcode')] = function () {
 
-        var token = dialogdiv.contents().find('#edit-insert option:selected').val();
+        var shortcode = dialogdiv.contents().find('#edit-insert option:selected').val();
         var editor_id = instanceId;
 
-        token = '[' + token + ']';
-        Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(token, editor_id);
+        shortcode = '[' + shortcode + ']';
+        Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(shortcode, editor_id);
         jQuery(this).dialog("close");
 
       };
@@ -70,7 +69,7 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
         autoresize: true,
         namespace: 'jquery_ui_dialog_default_ns',
         dialogClass: 'jquery_ui_dialog-dialog',
-        title: Drupal.t('Insert token'),
+        title: Drupal.t('Insert shortcode'),
         buttons: btns,
         width: 700,
         close: dialogClose
@@ -79,8 +78,8 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
     });
   },
     
-  insertIntoEditor: function (token, editor_id) {
-    Drupal.wysiwyg.instances[editor_id].insert(token);
+  insertIntoEditor: function (shortcode, editor_id) {
+    Drupal.wysiwyg.instances[editor_id].insert(shortcode);
   },
 
   /**

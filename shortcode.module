@@ -11,24 +11,35 @@
 /**
  * Build a list of all shortcodes (for filter).
  * Calls the shortcode hook with the list parameter on all module
- *
- * From filter.module
  */
-function shortcode_list_all() { // Should we cache this?
-  $shortcodes = array();
-  $shortcodes += module_invoke_all('shortcode_info');
+function shortcode_list_all($reset = FALSE) {
+  static $shortcodes;
+  
+  if(!isset($shortcodes) || $reset) {
+    $shortcodes = array();
+    $shortcodes += module_invoke_all('shortcode_info');
+  }
+  
   return $shortcodes;
 }
 
-function shortcode_list_all_enabled($format) { 
-  $shortcodes = shortcode_list_all();
+/**
+ * Returns only enabled shortcodes for a format
+ */
+function shortcode_list_all_enabled($format_id, $reset = FALSE) {
+  static $shortcodes_enabled;
   
-  /*
-  foreach($filter->settings as $name => $enabled) { // Run through all shortcodes
-    if($enabled && $shortcodes[$name]['tips callback'] && function_exists($shortcodes[$name]['tips callback']))
-      $tips .= call_user_func_array($shortcodes[$name]['tips callback'], $args);
+  if(!isset($shortcodes_enabled) || $reset) {
+    $shortcodes = shortcode_list_all($reset);
+    $filters = filter_list_format($format_id);
+    
+    foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
+      if($enabled)
+        $shortcodes_enabled[$name] = $shortcodes[$name];
+    }
   }
-  */
+  
+  return $shortcodes_enabled;
 }
 
 /**

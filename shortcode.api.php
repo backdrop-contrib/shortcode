@@ -6,6 +6,7 @@
  */
 
 /**
+ * hook_shortcode_info()
  * Declare shortcodes 
  * 
  * @return

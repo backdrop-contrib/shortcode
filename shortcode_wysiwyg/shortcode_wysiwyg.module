@@ -32,25 +32,28 @@ function shortcode_wysiwyg_menu() {
 }
 
 function shortcode_wysiwyg_form($form, &$form_state, $format_id) {
+  $options = $form = array();
   module_load_include('inc', 'shortcode', 'shortcode');
   drupal_set_title(t('Shortcode'));
-  print $format_id;
-  //print $form_id;
-  //print_r($format_id);
-  $filters = filter_list_format($format_id);
-  //print_r($filters);
-  //$options = shortcode_get_tokens();
   
-  $options = array('sadasd', 'sadasdd');
-  //print "hallo";
-  //exit;
-  $form = array();
+  $format_id = str_replace("format", "", $format_id); /// euhj...wtf...
+  $shortcodes = shortcode_list_all_enabled($format_id);
+
+  foreach($shortcodes as $name => $shortcode) {
+    $options[$name] = $shortcode['title'];
+  }  
+
   $form['shortcode'] = array(
     '#type' => 'select',
     '#title' => t('Choose the shortcode you want to insert.'),
     '#options' => $options,
     '#description' => t('This shortcode will be inserted in your textfield')
   );
+  
+  foreach($shortcodes as $name => $shortcode) {
+    if($shortcode['attributes callback'])
+      $form[$name] = call_user_func_array($shortcode['attributes callback'], array());
+  }
 
   return $form;
 }
