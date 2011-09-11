@@ -26,12 +26,15 @@ function shortcode_list_all($reset = FALSE) {
  * Returns only enabled shortcodes for a format
  */
 function shortcode_list_all_enabled($format_id, $reset = FALSE) {
-  $shortcodes_enabled & drupal_static(__FUNCTION__);
+  $shortcodes_enabled = &drupal_static(__FUNCTION__);
   
   if(!isset($shortcodes_enabled) || $reset) {
     $shortcodes = shortcode_list_all($reset);
-    $filters = filter_list_format($format_id);
-    
+    //dsm($format_id, 'format_id');
+    //dsm($shortcodes);
+    $filters = filter_list_format($format_id->format);
+    //dsm($filters);
+
     foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
       if($enabled) {
         $shortcodes_enabled[$name] = $shortcodes[$name];
@@ -68,15 +71,14 @@ function shortcode_filter_info() {
 * Filter tips callback
 */
 function _shortcode_filter_tips($filter, $format, $long = FALSE) {
-  $shortcodes = shortcode_list_all();
-  $tips = '';
-
+  $shortcodes = shortcode_list_all_enabled($format);
+  $tips = array();
   foreach($filter->settings as $name => $enabled) { // Run through all shortcodes
-    if($enabled && $shortcodes[$name]['tips callback'] && function_exists($shortcodes[$name]['tips callback']))
-      $tips .= call_user_func_array($shortcodes[$name]['tips callback'], $args);
+    if($enabled && !empty($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
+      $tips[] = call_user_func_array($shortcodes[$name]['tips callback'], func_get_args());
+    }
   }
-
-  return $tips;
+  return theme('item_list', array('items' =>$tips));
 }
 
 /**
