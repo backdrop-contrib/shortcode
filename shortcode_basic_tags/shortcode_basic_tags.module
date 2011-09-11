@@ -420,10 +420,7 @@ function shortcode_basic_tags_shortcode_link($attrs, $text) {
       // ...etc
       ), $attrs ));
 
-
-  $path = drupal_get_path_alias($path);
-
-  //dpr($attrs);
+  $path = url($path);
   if ($text) {
     $class = empty($class) ? '' : ' class="' . $class . '"';
     $style = empty($style) ? '' : ' style="' . $style . '"';
@@ -438,7 +435,6 @@ function shortcode_basic_tags_shortcode_link($attrs, $text) {
     return '<a href="' . $path . '"' . $id . $class . $style . $title . '>' . $text . '</a>';
   }
   return $path;
-
 }
 
 function shortcode_basic_tags_shortcode_link_tip($format, $long) {
