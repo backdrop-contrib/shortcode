@@ -13,8 +13,7 @@
  * Calls the shortcode hook with the list parameter on all module
  */
 function shortcode_list_all($reset = FALSE) {
-  static $shortcodes;
-  
+  $shortcodes = &drupal_static(__FUNCTION__);
   if(!isset($shortcodes) || $reset) {
     $shortcodes = array();
     $shortcodes += module_invoke_all('shortcode_info');
@@ -27,15 +26,16 @@ function shortcode_list_all($reset = FALSE) {
  * Returns only enabled shortcodes for a format
  */
 function shortcode_list_all_enabled($format_id, $reset = FALSE) {
-  static $shortcodes_enabled;
+  $shortcodes_enabled & drupal_static(__FUNCTION__);
   
   if(!isset($shortcodes_enabled) || $reset) {
     $shortcodes = shortcode_list_all($reset);
     $filters = filter_list_format($format_id);
     
     foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
-      if($enabled)
+      if($enabled) {
         $shortcodes_enabled[$name] = $shortcodes[$name];
+      }
     }
   }
   
@@ -85,14 +85,17 @@ function _shortcode_filter_tips($filter, $format, $long = FALSE) {
 function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaults) {
   $filter->settings += $defaults;
   $shortcodes = shortcode_list_all();
-
   foreach ($shortcodes as $key => $shortcode) {
     $settings[$key] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable %name shortcode', array('%name' => $shortcode['title'])),
-      '#default_value' => $filter->settings[$key],
+      '#default_value' => array(),
       '#description' => 'Enable or disable this shortcode in this input format',
     );
+
+    if (!empty($filter->settings[$key])) {
+      $settings[$key]['#default_value'] = $filter->settings[$key];
+    }
   }
 
   return $settings;
