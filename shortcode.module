@@ -295,7 +295,7 @@ function _shortcode_process_tag($m) {
 
   $tag = $m[2];
 
-  if ($shortcodes[$tag]->enabled) {
+  if (isset($shortcodes[$tag]) && $shortcodes[$tag]->enabled) {
     //dpr('_shortcode_process_tag: ' . $tag);
     // tag exists (enabled)
     $attr = _shortcode_parse_attrs($m[3]);
