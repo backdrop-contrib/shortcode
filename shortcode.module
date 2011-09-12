@@ -98,6 +98,9 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
     if (!empty($filter->settings[$key])) {
       $settings[$key]['#default_value'] = $filter->settings[$key];
     }
+    elseif( !empty($defaults[$key])) {
+      $settings[$key]['#default_value'] = $defaults[$key];
+    }
   }
 
   return $settings;
@@ -110,7 +113,7 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
  * @access private
  */
 function _shortcode_tags($tags = NULL) {
-  static $shortcodes = array();
+  $shortcodes = &drupal_static(__FUNCTION__, array());
   if ($tags) {
     $shortcodes = $tags;
     return TRUE;
@@ -124,7 +127,7 @@ function _shortcode_tags($tags = NULL) {
  */
 function _shortcode_process($text, $filter) {
   $shortcodes = shortcode_list_all();
-  
+  $shortcodes_enabled = array();
   foreach($filter->settings as $name => $value) { // run through all shortcodes
     if($value && $shortcodes[$name]['process callback']) {
       $shortcodes_enabled[$name]->enabled = TRUE;
@@ -132,7 +135,7 @@ function _shortcode_process($text, $filter) {
     }
   }
 
-  if (!$shortcodes_enabled) {
+  if (empty($shortcodes_enabled)) {
     return $text;
   }
 
