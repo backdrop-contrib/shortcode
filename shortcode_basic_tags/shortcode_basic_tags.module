@@ -145,17 +145,22 @@ function shortcode_basic_tags_shortcode_button($attrs, $text) {
   extract(shortcode_attrs( array(
       'title' => 'title default',
       'class' => 'button',
-      'url' =>  '/',
+      'url' =>  '',
+      'path' =>  '/',
       // ...etc
       ), $attrs ));
 
   $class = shortcode_add_class($class, 'button');
 
-  return theme('shortcode_button', array('url' => $url, 'text' => $text, 'class' => $class));
+  if ($url) {
+   $path = $url;
+  }
+  $path = url($path);
+  return theme('shortcode_button', array('path' => $path, 'text' => $text, 'class' => $class));
 }
 
 function shortcode_basic_tags_shortcode_button_tip($format, $long) {
-  $output = '<p><strong>[button (class="additional class")]text[/button]</strong>';
+  $output = '<p><strong>[button path="path" (class="additional class")]text[/button]</strong>';
   if ($long) {
     $output .= ' insert a link formatted like a button. Use url parameter for the link.</p>';
   }
@@ -168,7 +173,7 @@ function shortcode_basic_tags_shortcode_button_tip($format, $long) {
 }
 
 function theme_shortcode_button($vars) {
-  return '<a href="' . $vars['link'] . '" class="' . $vars['class'] . '"><span>' . $vars['text'] . '</span></a>';
+  return '<a href="' . $vars['path'] . '" class="' . $vars['class'] . '"><span>' . $vars['text'] . '</span></a>';
 }
 
 
