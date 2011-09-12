@@ -73,9 +73,10 @@ function shortcode_filter_info() {
 function _shortcode_filter_tips($filter, $format, $long = FALSE) {
   $shortcodes = shortcode_list_all_enabled($format);
   $tips = array();
+  $args = func_get_args();
   foreach($filter->settings as $name => $enabled) { // Run through all shortcodes
     if($enabled && !empty($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
-      $tips[] = call_user_func_array($shortcodes[$name]['tips callback'], func_get_args());
+      $tips[] = call_user_func_array($shortcodes[$name]['tips callback'], $args);
     }
   }
   return theme('item_list', array('items' =>$tips));
