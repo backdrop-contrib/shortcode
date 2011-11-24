@@ -258,7 +258,7 @@ function theme_shortcode_quote($vars) {
   }
   $output .= $vars['text'];
 
-  return '<span class="' . check_plain($vars['class']) . '">' . $output . '</span>';
+  return '<span class="' . $vars['class'] . '">' . $output . '</span>';
 }
 
 function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
@@ -310,7 +310,7 @@ function shortcode_basic_tags_shortcode_img($attrs, $text) {
 function theme_shortcode_img($vars) {
   //$alt = (!empty($vars['alt'])) ? ' alt="'. $vars['alt'] .'" ' : '';
   
-  return '<img src="'. url($vars['src']) .'" class="' . check_plain($vars['class']) . '" alt="' . check_plain($alt) . '"/>';
+  return '<img src="'. url($vars['src']) .'" class="' . $vars['class'] . '" alt="' . $alt . '"/>';
 }
 
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
