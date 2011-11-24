@@ -250,13 +250,15 @@ function shortcode_basic_tags_shortcode_quote($attrs, $text) {
 }
 
 function theme_shortcode_quote($vars) {
-  $output = $vars['text'];
-  
-  if(!empty($vars['author'])) // Add author
-    $output = '<span class="quote-author">'. t('%name wrote:', array('%name' => $vars['author'])) .'</span>'. $output;
+  $output = '';
 
-  $output = '<span class="' . check_plain($vars['class']) . '">' . $output . '</span>';
-  return $output;
+  if(!empty($vars['author'])) {
+    // Add author
+    $output = '<span class="quote-author">'. t('%name wrote:', array('%name' => $vars['author'])) .'</span>';
+  }
+  $output .= $vars['text'];
+
+  return '<span class="' . check_plain($vars['class']) . '">' . $output . '</span>';
 }
 
 function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
@@ -360,7 +362,7 @@ function theme_shortcode_item($vars) {
   $class = empty($vars['class']) ? '' : ' class="' . $vars['class'] . '"';
   $style = empty($vars['style']) ? '' : ' style="' . $vars['style'] . '"';
 
-  return '<' . $vars['type'] . $vars['id'] . $vars['class'] . $vars['style'] . '>' . $vars['text'] . '</' . $vars['type'] . '>';
+  return '<' . $vars['type'] . $id . $class . $style . '>' . $vars['text'] . '</' . $vars['type'] . '>';
 }
 
 function shortcode_basic_tags_shortcode_clear($attrs, $text) {
@@ -408,7 +410,7 @@ function theme_shortcode_clear($vars) {
   $class = empty($vars['class']) ? '' : ' class="' . $vars['class'] . '"';
   $style = empty($vars['style']) ? '' : ' style="' . $vars['style'] . '"';
 
-  return '<' . $vars['type'] . $vars['id'] . $vars['class'] . $vars['style'] . '>' . $vars['text'] . '</' . $vars['type'] . '>';
+  return '<' . $vars['type'] . $id . $class . $style . '>' . $vars['text'] . '</' . $vars['type'] . '>';
 }
 
 /*
@@ -454,13 +456,4 @@ function shortcode_basic_tags_shortcode_link_tip($format, $long) {
   }
 
   return $output;
-}
-
-/**
- * Theme hook for dropcap
- * @param $text
- * @param $class
- */
-function __theme_shortcode_alias($vars) {
-  return '<span class="' . $vars['class'] . '">' . $vars['text'] . '</span>';
 }
