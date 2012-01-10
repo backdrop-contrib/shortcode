@@ -58,7 +58,18 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
         var shortcode = dialogdiv.contents().find('#edit-shortcode option:selected').val();
         var editor_id = instanceId;
 
-        shortcode = '[' + shortcode + ']'+ data.content +'[/' + shortcode + ']';
+        var options = [];
+        dialogdiv.contents().find('input,select')
+          .not('#edit-shortcode,[type="hidden"]')
+          .each(function () {
+            var name = $(this).attr('name'), val = $(this).val();
+            if (val.length) {
+              options.push(name + '=' + val);
+            }
+          });
+
+        shortcode = '[' + shortcode + (options.length ? ' ' + options.join(' ') : '') + ']'+ data.content +'[/' + shortcode + ']';
+
         Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(shortcode, editor_id);
         jQuery(this).dialog("close");
 

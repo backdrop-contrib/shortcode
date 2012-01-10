@@ -51,8 +51,9 @@ function shortcode_wysiwyg_form($form, &$form_state, $format_id) {
   );
   
   foreach($shortcodes as $name => $shortcode) {
-    if($shortcode['attributes callback'])
-      $form[$name] = call_user_func_array($shortcode['attributes callback'], array());
+    if ($shortcode['attributes callback']) {
+      $form[$name] = call_user_func_array($shortcode['attributes callback'], array(array(), $form_state));
+    }
   }
 
   return $form;
