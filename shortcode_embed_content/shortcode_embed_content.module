@@ -79,8 +79,8 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
 
 function shortcode_embed_content_node_tip($format, $long) {
   $output = '';
-  if (shortcode_shortcode_is_enabled('highlight', $format)) {
-    $output = '<p><strong>[node nid=nodeid (class="additional class")/]</strong>';
+  if (shortcode_shortcode_is_enabled('embed_content', $format)) {
+    $output = '<p><strong>[embed_content nid=nodeid (class="additional class")/]</strong>';
     if ($long) {
       $output .= ' Embed a node by nid into the text. Additional class names can be added by the <em>class</em> parameter.</p>';
     }
@@ -97,7 +97,6 @@ function shortcode_embed_content_node_tip($format, $long) {
  * Implementation of hook_preprocess_node()
  */
 function shortcode_embed_content_preprocess_node(&$vars) {
-  dpm($vars, __FUNCTION__);
   if (isset($vars['shortcode']) && $vars['shortcode']->embedded) {
     $vars['template_files'][] = "node-shortcode--default";
     $vars['template_files'][] = 'node-shortcode--' . $vars['type'];

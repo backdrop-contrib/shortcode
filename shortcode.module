@@ -52,7 +52,7 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
 function shortcode_filter_info() {
   $filters['shortcode'] = array(
     'title' => t('Shortcodes'), 
-    'description' => t('Shortcodes like in WP.'), 
+    'description' => t('Provides WP like shortcodes to this text format.'),
     'process callback' => '_shortcode_process', 
     'settings callback' => '_shortcode_settings_form',
     'tips callback' => '_shortcode_filter_tips',
@@ -60,7 +60,7 @@ function shortcode_filter_info() {
   );
   $filters['shortcode_text'] = array(
     'title' => t('Shortcodes - html corrector'), 
-    'description' => t('Shortcodes html corrector.'),
+    'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
     'process callback' => '_shortcode_postprocess_text',
     'default settings' => array(),
   );
@@ -129,10 +129,16 @@ function _shortcode_tags($tags = NULL) {
  * Process the shortcodes according to the text and the text format.
  */
 function _shortcode_process($text, $filter) {
+  // TODO: need cache for list_all for the given filter!
   $shortcodes = shortcode_list_all();
   $shortcodes_enabled = array();
+
+  dpm($filter, 'Filter ' . __FUNCTION__);
+  dpm($shortcodes, 'shortcodes ' . __FUNCTION__);
+
   foreach($filter->settings as $name => $value) { // run through all shortcodes
     if($value && $shortcodes[$name]['process callback']) {
+      $shortcodes_enabled[$name] = new stdClass();
       $shortcodes_enabled[$name]->enabled = TRUE;
       $shortcodes_enabled[$name]->function = $shortcodes[$name]['process callback'];
     }
@@ -259,7 +265,7 @@ function _shortcode_process($text, $filter) {
 /*
  * Html corrector for wysiwyg editors
  *
- * Correncting p elements around the divs. No div are allowed in p so remove them.
+ * Correcting p elements around the divs. No div are allowed in p so remove them.
  *
  */
 function _shortcode_postprocess_text($text, $filter) {
@@ -292,6 +298,7 @@ function _shortcode_postprocess_text($text, $filter) {
  * @return mixed False on failure.
  */
 function _shortcode_process_tag($m) {
+  // get tags from static cache
   $shortcodes = _shortcode_tags();
 
   // allow [[foo]] syntax for escaping a tag
