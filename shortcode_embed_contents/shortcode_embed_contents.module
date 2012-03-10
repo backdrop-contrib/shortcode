@@ -14,14 +14,15 @@ function shortcode_embed_contents_shortcode_info() {
 }
 
 /**
- * Insert a span around the text with highlight css class
+ * Embed a node content into the text
  *
  * Calling
- * [highlight]text[/highlight]
+ * [embed_content nid=X class="" /]
  *
  *
- * If the length empty or invalid, between 1-99, the length will be 8
+ * If no nid given the result will be empty
  *
+ * FIXME: implement view_mode - other than teaser or full!
  */
 function shortcode_embed_contents_shortcode_node($attrs, $text) {
   extract( shortcode_attrs( array(
