@@ -111,11 +111,13 @@ function shortcode_basic_tags_theme() {
  *
  */
 function shortcode_basic_tags_shortcode_highlight($attrs, $text) {
-  extract( shortcode_attrs( array(
+  $attrs = shortcode_attrs(array(
       'class'  => '',
-      ), $attrs ));
+    ),
+    $attrs
+  );
 
-  $class = shortcode_add_class($class, 'highlight');
+  $class = shortcode_add_class($attrs['class'], 'highlight');
   return '<span class="' . $class . '">' . $text . '</span>';
 }
 
@@ -142,20 +144,20 @@ function shortcode_basic_tags_shortcode_highlight_tip($format, $long) {
 }
 
 function shortcode_basic_tags_shortcode_button($attrs, $text) {
-  extract(shortcode_attrs( array(
+  $attrs = shortcode_attrs(array(
       'title' => 'title default',
       'class' => 'button',
       'url' =>  '',
-      'path' =>  '/',
-      // ...etc
-      ), $attrs ));
+      'path' =>  '<front>',
+      ),
+      $attrs
+  );
 
-  $class = shortcode_add_class($class, 'button');
-
-  if ($url) {
-   $path = $url;
+  $class = shortcode_add_class($attrs['class'], 'button');
+  if ($attrs['url']) {
+   $attrs['path'] = $attrs['url'];
   }
-  $path = url($path);
+  $path = url($attrs['path']);
   return theme('shortcode_button', array('path' => $path, 'text' => $text, 'class' => $class));
 }
 
@@ -165,9 +167,10 @@ function shortcode_basic_tags_shortcode_button_tip($format, $long) {
     $output .= ' insert a link formatted like a button. Use url parameter for the link.</p>';
   }
   else {
-    $output .= ' insert a link formatted like a button. The <em>url</em> parameter provides the link target. The <em>title</em> will be formatted as a link title (small tooltip over the link - helps for SEO). Additional class names can be added by the <em>class</em> parameter.</p>';
+    $output .= ' insert a link formatted like a button. The <em>path</em> parameter provides the link target.
+    The <em>title</em> will be formatted as a link title (small tooltip over the link - helps for SEO).
+    Additional class names can be added by the <em>class</em> parameter.</p>';
   }
-
 
   return $output;
 }
@@ -178,12 +181,13 @@ function theme_shortcode_button($vars) {
 
 
 function shortcode_basic_tags_shortcode_dropcap($attrs, $text) {
-  extract(shortcode_attrs( array(
-      'class' => 'dropcap',
-      // ...etc
-      ), $attrs ));
+  $attrs = shortcode_attrs( array(
+        'class' => 'dropcap',
+      ),
+      $attrs
+  );
 
-  $class = shortcode_add_class($class, 'dropcap');
+  $class = shortcode_add_class($attrs['class'], 'dropcap');
   return theme('shortcode_dropcap', array('text' => $text, 'class' => $class));
 }
 
@@ -220,17 +224,18 @@ function shortcode_basic_tags_shortcode_dropcap_tip($format, $long) {
   return $output;
 }
 
-function shortcode_basic_tags_quote_attributes($form, &$form_state) {
-  $form['class'] = array(
-    '#title' => t('class'), 
-    '#type' => 'textfield', 
-  );
-    
-  return $form;
-}
-
-function shortcode_basic_tags_quote_options_submit($form, &$form_state) {
-}
+// FIXME: what for these funcs?
+//function shortcode_basic_tags_quote_attributes($form, &$form_state) {
+//  $form['class'] = array(
+//    '#title' => t('class'),
+//    '#type' => 'textfield',
+//  );
+//
+//  return $form;
+//}
+//
+//function shortcode_basic_tags_quote_options_submit($form, &$form_state) {
+//}
 
 /**
  *
@@ -239,14 +244,16 @@ function shortcode_basic_tags_quote_options_submit($form, &$form_state) {
  * @param $text
  */
 function shortcode_basic_tags_shortcode_quote($attrs, $text) {
-  extract(shortcode_attrs(array(
+  $attrs = shortcode_attrs(array(
       'class' => 'quote',
       'author' => '',
-      ), $attrs));
+      ),
+      $attrs
+  );
 
-  $class = shortcode_add_class($class, 'quote');
+  $class = shortcode_add_class($attrs['class'], 'quote');
 
-  return theme('shortcode_quote', array('text' => $text, 'author' => $author, 'class' => $class));
+  return theme('shortcode_quote', array('text' => $text, 'author' => $attrs['author'], 'class' => $class));
 }
 
 function theme_shortcode_quote($vars) {
@@ -297,20 +304,22 @@ function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
 }
 
 function shortcode_basic_tags_shortcode_img($attrs, $text) {
-  extract(shortcode_attrs(array(
+  $attrs = shortcode_attrs(array(
       'class' => 'img',
       'alt' => '',
-      ), $attrs));
+      ),
+      $attrs
+  );
 
-  $class = shortcode_add_class($class, 'img');
+  $class = shortcode_add_class($attrs['class'], 'img');
 
-  return theme('shortcode_img', array('src' => $text, 'alt' => $alt, 'class' => $class));
+  return theme('shortcode_img', array('src' => $text, 'alt' => $attrs['alt'], 'class' => $class));
 }
 
 function theme_shortcode_img($vars) {
   //$alt = (!empty($vars['alt'])) ? ' alt="'. $vars['alt'] .'" ' : '';
   
-  return '<img src="'. url($vars['src']) .'" class="' . $vars['class'] . '" alt="' . $alt . '"/>';
+  return '<img src="'. url($vars['src']) .'" class="' . $vars['class'] . '" alt="' . $vars['alt'] . '"/>';
 }
 
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
@@ -321,15 +330,17 @@ function shortcode_basic_tags_shortcode_img_tip($format, $long) {
 }
 
 function shortcode_basic_tags_shortcode_item($attrs, $text) {
-  extract(shortcode_attrs( array(
+  $attrs = shortcode_attrs( array(
       'class' => '',
       'style' => '',
       'id' => '',
       'type' => 'div',
       // ...etc
-      ), $attrs ));
+      ),
+      $attrs
+  );
 
-  switch ($type) {
+  switch ($attrs['type']) {
     case 's':
     case 'span':
       $type = 'span';
@@ -340,7 +351,7 @@ function shortcode_basic_tags_shortcode_item($attrs, $text) {
     break;
   }
 
-  return theme('shortcode_item', array('text' => $text, 'id' => $id, 'class' => $class, 'type' => $type, 'style' => $style));
+  return theme('shortcode_item', array('text' => $text, 'id' => $attrs['id'], 'class' => $attrs['class'], 'type' => $type, 'style' => $attrs['style']));
 }
 
 function shortcode_basic_tags_shortcode_item_tip($format, $long) {
@@ -366,17 +377,19 @@ function theme_shortcode_item($vars) {
 }
 
 function shortcode_basic_tags_shortcode_clear($attrs, $text) {
-  extract(shortcode_attrs( array(
+  $attrs = shortcode_attrs( array(
       'class' => '',
       'style' => '',
       'id' => '',
       'type' => 'div',
       // ...etc
-      ), $attrs ));
+      ),
+      $attrs
+  );
 
-  $class = shortcode_add_class($class, 'clear-block');
+  $class = shortcode_add_class($attrs['class'], 'clearfix');
 
-  switch ($type) {
+  switch ($attrs['type']) {
     case 's':
     case 'span':
       $type = 'span';
@@ -387,10 +400,9 @@ function shortcode_basic_tags_shortcode_clear($attrs, $text) {
     break;
   }
 
-  return theme('shortcode_clear', array('text' => $text, 'id' => $id, 'class' => $class, 'type' => $type, 'style' => $style));
+  return theme('shortcode_clear', array('text' => $text, 'id' => $attrs['id'], 'class' => $class, 'type' => $attrs['type'], 'style' => $attrs['style']));
 }
 
-// TODO: fill it
 function shortcode_basic_tags_shortcode_clear_tip($format, $long) {
   $output = '<p><strong>[clear (class="additional class"|id=item id|type=div,d,span,s)]text[/clear]</strong>';
   if ($long) {
@@ -421,22 +433,23 @@ function theme_shortcode_clear($vars) {
  *
  */
 function shortcode_basic_tags_shortcode_link($attrs, $text) {
-  extract(shortcode_attrs( array(
+  $attrs = shortcode_attrs( array(
       'path' => '<front>',
       'title' => '',
       // ...etc
-      ), $attrs ));
+      ), $attrs
+  );
 
-  $path = url($path);
+  $path = url($attrs['path']);
   if ($text) {
     $class = empty($class) ? '' : ' class="' . $class . '"';
     $style = empty($style) ? '' : ' style="' . $style . '"';
     $id = empty($id) ? '' : ' id="' . $id . '"';
-    if ($title == '<none>') {
+    if ($attrs['title'] == '<none>') {
       $title = '';
     }
     else {
-      $title = empty($title) ? check_plain($text) : check_plain($title);
+      $title = empty($attrs['title']) ? check_plain($text) : check_plain($attrs['title']);
       $title = ' title="' . $title . '"';
     }
     return '<a href="' . $path . '"' . $id . $class . $style . $title . '>' . $text . '</a>';
