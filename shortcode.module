@@ -26,24 +26,31 @@ function shortcode_list_all($reset = FALSE) {
  * Returns only enabled shortcodes for a format
  */
 function shortcode_list_all_enabled($format, $reset = FALSE) {
-  $shortcodes_enabled = &drupal_static(__FUNCTION__);
-  
   if (is_string($format)) {
     $format = filter_format_load($format);
   }
-  
-  if(!isset($shortcodes_enabled) || $reset) {
-    $shortcodes = shortcode_list_all($reset);
-    $filters = filter_list_format($format->format);
 
-    foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
-      if($enabled) {
-        $shortcodes_enabled[$name] = $shortcodes[$name];
-      }
-    }
+  $shortcodes_enabled = &drupal_static(__FUNCTION__, array());
+
+  if (isset($shortcodes_enabled[$format->format]) && !$reset) {
+    return $shortcodes_enabled[$format->format];
+  }
+  $shortcodes_enabled[$format->format] = array();
+  
+  $shortcodes = shortcode_list_all($reset);
+  $filters = filter_list_format($format->format);
+
+  if (empty($filters['shortcode'])) {
+    return array();
   }
   
-  return $shortcodes_enabled;
+  foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
+    if ($enabled) {
+      $shortcodes_enabled[$format->format][$name] = $shortcodes[$name];
+    }
+  }
+
+  return $shortcodes_enabled[$format->format];
 }
 
 /**
@@ -58,7 +65,7 @@ function shortcode_filter_info() {
     'tips callback' => '_shortcode_filter_tips',
     'default settings' => array(),
   );
-  $filters['shortcode_text'] = array(
+  $filters['shortcode_text_corrector'] = array(
     'title' => t('Shortcodes - html corrector'), 
     'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
     'process callback' => '_shortcode_postprocess_text',
@@ -133,14 +140,11 @@ function _shortcode_process($text, $filter) {
   $shortcodes = shortcode_list_all();
   $shortcodes_enabled = array();
 
-  dpm($filter, 'Filter ' . __FUNCTION__);
-  dpm($shortcodes, 'shortcodes ' . __FUNCTION__);
-
   foreach($filter->settings as $name => $value) { // run through all shortcodes
     if($value && $shortcodes[$name]['process callback']) {
-      $shortcodes_enabled[$name] = new stdClass();
-      $shortcodes_enabled[$name]->enabled = TRUE;
-      $shortcodes_enabled[$name]->function = $shortcodes[$name]['process callback'];
+      $shortcodes_enabled[$name] = array(
+        'function' => $shortcodes[$name]['process callback'],
+      );
     }
   }
 
@@ -151,7 +155,7 @@ function _shortcode_process($text, $filter) {
   // save the shortcodes
   _shortcode_tags($shortcodes_enabled);
 
-  // imroved version - recursive processing - embed tags within tags supported!
+  // improved version - recursive processing - embed tags within other tags is supported!
   $chunks = preg_split('!(\[.*?\])!', $text, -1,  PREG_SPLIT_DELIM_CAPTURE  );
 
   //dpr($chunks);
@@ -269,7 +273,6 @@ function _shortcode_process($text, $filter) {
  *
  */
 function _shortcode_postprocess_text($text, $filter) {
-  //return $text;
   $patterns = array(
     '|#!#|is',
     '!<p>(&nbsp;|\s)*(<\/*div>)!is',
@@ -278,9 +281,6 @@ function _shortcode_postprocess_text($text, $filter) {
     '!(<div.*?>)\s*</p>!is',
   );
 
-  /*
-   *
-   */
   //$replacements = array('!!\\2', '###\\2', '@@@\\1');
   $replacements = array('', '\\2', '\\2', '\\1', '\\1');
   return preg_replace($patterns, $replacements, $text);
@@ -308,11 +308,9 @@ function _shortcode_process_tag($m) {
 
   $tag = $m[2];
 
-  if (isset($shortcodes[$tag]) && $shortcodes[$tag]->enabled) {
-    //dpr('_shortcode_process_tag: ' . $tag);
+  if (!empty($shortcodes[$tag])) {
     // tag exists (enabled)
     $attr = _shortcode_parse_attrs($m[3]);
-    //dpr($attr);
       /*
       * 0 - the full tag text?
       * 1/5 - An extra [ or ] to allow for escaping shortcodes with double [[]]
@@ -322,14 +320,13 @@ function _shortcode_process_tag($m) {
       * */
 
     if (! is_null($m[4]) ) {
-      //dpr('fv: ' . $shortcodes[$tag]->function);
       // enclosing tag - extra parameter
-      return $m[1] . call_user_func($shortcodes[$tag]->function, $attr, $m[4], $m[2]) . $m[5];
+      return $m[1] . call_user_func($shortcodes[$tag]['function'], $attr, $m[4], $m[2]) . $m[5];
     }
     else {
       // self-closing tag
       //dpr('fv self closing: ' . $shortcodes[$tag]->function);
-      return $m[1] . call_user_func($shortcodes[$tag]->function, $attr, NULL, $m[2]) . $m[5];
+      return $m[1] . call_user_func($shortcodes[$tag]['function'], $attr, NULL, $m[2]) . $m[5];
     }
   }
   elseif(is_null($m[4])) {
