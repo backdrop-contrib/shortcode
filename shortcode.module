@@ -63,13 +63,11 @@ function shortcode_filter_info() {
     'process callback' => '_shortcode_process', 
     'settings callback' => '_shortcode_settings_form',
     'tips callback' => '_shortcode_filter_tips',
-    'default settings' => array(),
   );
   $filters['shortcode_text_corrector'] = array(
     'title' => t('Shortcodes - html corrector'), 
     'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
     'process callback' => '_shortcode_postprocess_text',
-    'default settings' => array(),
   );
  
   return $filters;

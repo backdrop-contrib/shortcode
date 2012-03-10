@@ -12,7 +12,6 @@ function shortcode_basic_tags_shortcode_info() {
     //'settings callback' => '_shortcode_settings_form', TODO
     'attributes callback' => "shortcode_basic_tags_quote_attributes",
     'tips callback' => 'shortcode_basic_tags_shortcode_quote_tip',
-    'default settings' => array(),
   );
   $shortcodes['img'] = array(
     'title' => t('Image'), 
@@ -20,7 +19,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_img', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_img_tip',
-    'default settings' => array(),
   );
   $shortcodes['highlight'] = array(
     'title' => t('Highlight'), 
@@ -28,7 +26,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_highlight', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_highlight_tip',
-    'default settings' => array(),
   );
     $shortcodes['button'] = array(
     'title' => t('Button'), 
@@ -36,7 +33,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_button', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_button_tip',
-    'default settings' => array(),
   );
   $shortcodes['dropcap'] = array(
     'title' => t('Dropcap'), 
@@ -44,7 +40,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_dropcap', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_dropcap_tip',
-    'default settings' => array(),
   );
   $shortcodes['item'] = array(
     'title' => t('Item'), 
@@ -52,7 +47,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_item', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_item_tip',
-    'default settings' => array(),
   );
   $shortcodes['clear'] = array(
     'title' => t('Clear'), 
@@ -60,7 +54,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_clear', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_clear_tip',
-    'default settings' => array(),
   );
   $shortcodes['link'] = array(
     'title' => t('Link'), 
@@ -68,7 +61,6 @@ function shortcode_basic_tags_shortcode_info() {
     'process callback' => 'shortcode_basic_tags_shortcode_link',
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_link_tip',
-    'default settings' => array(),
   );
   
   return $shortcodes;
