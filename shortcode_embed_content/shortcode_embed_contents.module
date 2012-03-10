@@ -1,9 +1,15 @@
 <?php
+/**
+ * Implements hook_shortcode_info()
+ * 
+ * @return array - The shortcode definition array
+ * 
+ */
 function shortcode_embed_content_shortcode_info() {
   // Quote shortcode example
   $shortcodes['embed_content'] = array(
     'title' => t('Embed content'),
-    'description' => t('Embed.'),
+    'description' => t('Embed node content into the text.'),
     'process callback' => 'shortcode_embed_content_shortcode_node',
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_embed_content_node_tip',
@@ -17,8 +23,11 @@ function shortcode_embed_content_shortcode_info() {
  * Embed a node content into the text
  *
  * Calling
- * [embed_content nid=X class="" /]
+ * [embed_content nid=X /]
  *
+ * Other shortcode parameters
+ *
+ * class - additional class to the node
  *
  * If no nid given the result will be empty
  *
