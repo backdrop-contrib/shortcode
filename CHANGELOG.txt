@@ -5,6 +5,7 @@ Shortcode 7.x-2.x, xxxx-xx-xx
 Shortcode 7.x-2.x, 2012-03-10                                                                                                               
 ------------------------------ 
 
+by Denes.Szabo: Allowed to escape codes.
 by Denes.Szabo: Updated the code tips, now all translateable.
 by Denes.Szabo: Updated to use new attr handling method to help code editors.
 by Denes.Szabo: Lots of fixes and cleanups
