@@ -419,7 +419,7 @@ function shortcode_attrs($pairs, $atts) {
 }
 
 /**
- * Helper function to decide the give param bool value
+ * Helper function to decide the given param is a bool value
  * @param mixed $var
  *
  * @return bool

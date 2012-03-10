@@ -49,6 +49,7 @@ function shortcode_embed_contents_shortcode_node($attrs, $text) {
   }
 
   $params = new stdClass();
+  // add embedded flag to the node
   $params->embedded = TRUE;
 
   $params->teaser = shortcode_bool($teaser);
@@ -61,8 +62,6 @@ function shortcode_embed_contents_shortcode_node($attrs, $text) {
   $params->attrs = $attrs;
 
   $node->shortcode = $params;
-
-  //dpr($params);
 
   $output = node_view($node, $params->teaser);
   return $output;
