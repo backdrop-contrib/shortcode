@@ -1,4 +1,7 @@
 <?php
+/*
+ * FIXME: Need implement dynamic embedding: make embedding when the content shows
+ */
 /**
  * Implements hook_shortcode_info()
  * 
@@ -6,7 +9,6 @@
  * 
  */
 function shortcode_embed_content_shortcode_info() {
-  // Quote shortcode example
   $shortcodes['embed_content'] = array(
     'title' => t('Embed content'),
     'description' => t('Embed node content into the text.'),
@@ -37,9 +39,10 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
   extract( shortcode_attrs( array(
       'nid'    => 0,
       'class'  => '',
-      'teaser' => FALSE,
+      'view_mode' => 'full',
       'show_title' => FALSE,
       'show_submitted' => FALSE,
+      'show_meta' => FALSE,
       'show_terms' => FALSE,
       'show_links' => FALSE,
       ), $attrs ));
@@ -47,8 +50,8 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
 
   if (is_numeric($nid) && $nid) {
     $node = node_load($nid);
+    // add embedded flag to the node
     $node->shortcode_embedded = TRUE;
-
     if (!$node->status || !node_access('view', $node)) {
       return '';
     }
@@ -58,10 +61,9 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
   }
 
   $params = new stdClass();
-  // add embedded flag to the node
   $params->embedded = TRUE;
-
-  $params->teaser = shortcode_bool($teaser);
+  // fixme: what view modes supported
+  $params->view_mode = $view_mode;
   $params->show_title = shortcode_bool($show_title);
   $params->show_meta = shortcode_bool($show_meta);
   $params->show_submitted = shortcode_bool($show_submitted);
@@ -69,24 +71,21 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
   $params->show_links = shortcode_bool($show_links);
   // insert the original attributes to the params
   $params->attrs = $attrs;
-
   $node->shortcode = $params;
-
-  $output = node_view($node, $params->teaser);
-  return $output;
+  //$content = node_view($node, $params->view_mode);
+  $content = node_view($node, 'teaser');
+  return render($content);
 } // shortcode_embed_content_shortcode_node()
 
 
 function shortcode_embed_content_node_tip($format, $long) {
   $output = '';
-  if (shortcode_shortcode_is_enabled('embed_content', $format)) {
-    $output = '<p><strong>[embed_content nid=nodeid (class="additional class")/]</strong>';
-    if ($long) {
-      $output .= ' Embed a node by nid into the text. Additional class names can be added by the <em>class</em> parameter.</p>';
-    }
-    else {
-      $output .= '  Embed a node by nid into the text. Additional class names can be added by the <em>class</em> parameter.</p>';
-    }
+  $output = '<p><strong>[embed_content nid=nodeid (class="additional class")/]</strong> ';
+  if ($long) {
+    $output .= 'Embed a node by nid into the text. Additional class names can be added by the <em>class</em> parameter.</p>';
+  }
+  else {
+    $output .= 'Embed a node by nid into the text. Additional class names can be added by the <em>class</em> parameter.</p>';
   }
 
   return $output;
@@ -95,6 +94,7 @@ function shortcode_embed_content_node_tip($format, $long) {
 
 /**
  * Implementation of hook_preprocess_node()
+ * TODO: implement dynamic embedding!
  */
 function shortcode_embed_content_preprocess_node(&$vars) {
   if (isset($vars['shortcode']) && $vars['shortcode']->embedded) {
