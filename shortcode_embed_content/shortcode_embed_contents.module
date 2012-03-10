@@ -1,12 +1,12 @@
 <?php
-function shortcode_embed_contents_shortcode_info() {
+function shortcode_embed_content_shortcode_info() {
   // Quote shortcode example
   $shortcodes['embed_content'] = array(
     'title' => t('Embed content'),
     'description' => t('Embed.'),
-    'process callback' => 'shortcode_basic_tags_shortcode_quote',
+    'process callback' => 'shortcode_embed_content_shortcode_node',
     //'settings callback' => '_shortcode_settings_form', TODO
-    'tips callback' => 'shortcode_embed_contents_node_tip',
+    'tips callback' => 'shortcode_embed_content_node_tip',
     'default settings' => array(),
   );
 
@@ -22,9 +22,9 @@ function shortcode_embed_contents_shortcode_info() {
  *
  * If no nid given the result will be empty
  *
- * FIXME: implement view_mode - other than teaser or full!
+ * TODO: implement view_mode - other than teaser or full!
  */
-function shortcode_embed_contents_shortcode_node($attrs, $text) {
+function shortcode_embed_content_shortcode_node($attrs, $text) {
   extract( shortcode_attrs( array(
       'nid'    => 0,
       'class'  => '',
@@ -65,10 +65,10 @@ function shortcode_embed_contents_shortcode_node($attrs, $text) {
 
   $output = node_view($node, $params->teaser);
   return $output;
-} // shortcode_embed_contents_shortcode_node()
+} // shortcode_embed_content_shortcode_node()
 
 
-function shortcode_embed_contents_node_tip($format, $long) {
+function shortcode_embed_content_node_tip($format, $long) {
   $output = '';
   if (shortcode_shortcode_is_enabled('highlight', $format)) {
     $output = '<p><strong>[node nid=nodeid (class="additional class")/]</strong>';
@@ -81,13 +81,13 @@ function shortcode_embed_contents_node_tip($format, $long) {
   }
 
   return $output;
-} // shortcode_embed_contents_node_tip()
+} // shortcode_embed_content_node_tip()
 
 
 /**
  * Implementation of hook_preprocess_node()
  */
-function shortcode_embed_contents_preprocess_node(&$vars) {
+function shortcode_embed_content_preprocess_node(&$vars) {
   dpm($vars, __FUNCTION__);
   if (isset($vars['shortcode']) && $vars['shortcode']->embedded) {
     $vars['template_files'][] = "node-shortcode--default";
@@ -101,7 +101,7 @@ function shortcode_embed_contents_preprocess_node(&$vars) {
  * We want our path suggestion for the module to be overridden by the theme, so
  * some re-ordering is needed.
  */
-function _shortcode_embed_contents_theme_registry_alter(&$theme_registry) {
+function _shortcode_embed_content_theme_registry_alter(&$theme_registry) {
   $paths = $theme_registry['node']['theme path'];
   $theme = $theme_registry['page']['theme path'];
 
@@ -125,7 +125,7 @@ function _shortcode_embed_contents_theme_registry_alter(&$theme_registry) {
   $key = array_search($theme, $paths);
 
   if ($key === FALSE) {
-    $theme_registry['node']['theme path'][] = drupal_get_path('module', 'shortcode_embed_contents') ."/theme";
+    $theme_registry['node']['theme path'][] = drupal_get_path('module', 'shortcode_embed_content') ."/theme";
   }
   else {
     //dpr($theme_registry['node']['theme paths'],FALSE, 'PATHS');
@@ -134,7 +134,7 @@ function _shortcode_embed_contents_theme_registry_alter(&$theme_registry) {
     $first = TRUE;
     foreach ($theme_registry['node']['theme path'] as $path) {
     	if ($first && preg_match('!themes!', $path)) {
-        $paths[] = drupal_get_path('module', 'shortcode_embed_contents') ."/theme";
+        $paths[] = drupal_get_path('module', 'shortcode_embed_content') ."/theme";
         $first = FALSE;
     	}
     	$paths[] = $path;
@@ -149,7 +149,7 @@ function _shortcode_embed_contents_theme_registry_alter(&$theme_registry) {
       (
           [0] => modules/system
           [1] => sites/all/themes/ninesixty
-          [2] => sites/all/modules/shortcode/shortcode_embed_contents/theme
+          [2] => sites/all/modules/shortcode/shortcode_embed_content/theme
           [3] => sites/all/themes/internode
       )
 
