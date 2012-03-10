@@ -87,6 +87,7 @@ function _shortcode_filter_tips($filter, $format, $long = FALSE) {
  * Settings form
  */
 function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaults) {
+  $settings = array();
   $filter->settings += $defaults;
   $shortcodes = shortcode_list_all();
   foreach ($shortcodes as $key => $shortcode) {
