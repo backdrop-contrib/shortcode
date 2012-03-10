@@ -160,9 +160,8 @@ function _shortcode_process($text, $filter) {
   _shortcode_tags($shortcodes_enabled);
 
   // improved version - recursive processing - embed tags within other tags is supported!
-  $chunks = preg_split('!(\[.*?\])!', $text, -1,  PREG_SPLIT_DELIM_CAPTURE  );
+  $chunks = preg_split('!(\[{1,2}.*?\]{1,2})!', $text, -1,  PREG_SPLIT_DELIM_CAPTURE  );
 
-  //dpr($chunks);
   $heap = array();
   $heap_index = array();
 
@@ -170,11 +169,19 @@ function _shortcode_process($text, $filter) {
     if (!$c) {
       continue;
     }
+
+    $escaped = FALSE;
+    if ((substr($c, 0, 2) == '[[') && (substr($c, -2, 2) == ']]')) {
+      $escaped = TRUE;
+      // remove outer []
+      $c = substr($c, 1, -1);
+    }
     // shortcode or not
-    if (($c[0] == '[') && (substr($c, -1, 1) == ']')) {
+    if (!$escaped && ($c[0] == '[') && (substr($c, -1, 1) == ']')) {
       // $c contains shortcode
 
       // self-closing tag or not
+      // remove outer []
       $c = substr($c, 1, -1);
 
       if (substr($c, -1, 1) == '/') {
@@ -247,11 +254,9 @@ function _shortcode_process($text, $filter) {
       }
       else {
         // starting tag. put to the heap
-        //dpr('tag pattern: ' . $c);
         $ts = explode(' ', trim($c));
         $tag = array_shift($ts);
 
-        // dpr('start tag: ' . $tag);
         array_unshift($heap_index, $tag);
         array_unshift($heap, implode(' ', $ts));
       }
@@ -303,9 +308,9 @@ function _shortcode_process_tag($m) {
   $shortcodes = _shortcode_tags();
 
   // allow [[foo]] syntax for escaping a tag
-  if ($m[1] == '[' && $m[5] == ']') {
-    return substr($m[0], 1, -1);
-  }
+//  if ($m[1] == '[' && $m[5] == ']') {
+//    return substr($m[0], 1, -1);
+//  }
 
   $tag = $m[2];
 
