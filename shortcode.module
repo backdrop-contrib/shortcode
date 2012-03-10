@@ -176,11 +176,9 @@ function _shortcode_process($text, $filter) {
 
       // self-closing tag or not
       $c = substr($c, 1, -1);
-      //dpr('process: ' . $c);
 
       if (substr($c, -1, 1) == '/') {
         // process a self closing tag - it has / at the end!
-        //dpr('self closing: ' . $c);
           /*
           * 0 - the full tag text?
           * 1/5 - An extra [ or ] to allow for escaping shortcodes with double [[]]
@@ -235,10 +233,9 @@ function _shortcode_process($text, $filter) {
             array_unshift($process_heap, $heap_text);
             array_unshift($process_heap_index, $tag);
           }
-        } while(!$found && $heap);
+        } while (!$found && $heap);
 
-        if(!$found) {
-
+        if (!$found) {
           foreach($process_heap as $val) {
             array_unshift($heap, $val);
           }
@@ -323,7 +320,7 @@ function _shortcode_process_tag($m) {
       * 4 - The content of a shortcode when it wraps some content.
       * */
 
-    if (! is_null($m[4]) ) {
+    if (!is_null($m[4]) ) {
       // enclosing tag - extra parameter
       return $m[1] . call_user_func($shortcodes[$tag]['function'], $attr, $m[4], $m[2]) . $m[5];
     }
