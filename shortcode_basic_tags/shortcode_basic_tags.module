@@ -2,12 +2,12 @@
 
 /**
 * Implementation of hook_shortcode_info().
-* Using same formatting as hook_filter_info()
+* Using the same formatting as hook_filter_info()
 */
 function shortcode_basic_tags_shortcode_info() {
   $shortcodes['quote'] = array(
     'title' => t('Quote'), 
-    'description' => t('Replace a given text formatted like a quote.'), 
+    'description' => t('Replace a given text formatted like as a quote.'),
     'process callback' => 'shortcode_basic_tags_shortcode_quote', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'attributes callback' => "shortcode_basic_tags_quote_attributes",
@@ -15,28 +15,28 @@ function shortcode_basic_tags_shortcode_info() {
   );
   $shortcodes['img'] = array(
     'title' => t('Image'), 
-    'description' => t('Show a image.'), 
+    'description' => t('Show an image.'),
     'process callback' => 'shortcode_basic_tags_shortcode_img', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_img_tip',
   );
   $shortcodes['highlight'] = array(
     'title' => t('Highlight'), 
-    'description' => t('Insert a span around the text with highlight css class.'), 
+    'description' => t('Insert a span with highlight css class around the text.'),
     'process callback' => 'shortcode_basic_tags_shortcode_highlight', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_highlight_tip',
   );
     $shortcodes['button'] = array(
     'title' => t('Button'), 
-    'description' => t('Insert a link formatted like a button.'), 
+    'description' => t('Insert a link formatted like as a button.'),
     'process callback' => 'shortcode_basic_tags_shortcode_button', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_button_tip',
   );
   $shortcodes['dropcap'] = array(
     'title' => t('Dropcap'), 
-    'description' => t('Replace a given text formatted like a dropcap.'), 
+    'description' => t('Replace a given text formatted like as a dropcap.'),
     'process callback' => 'shortcode_basic_tags_shortcode_dropcap', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_dropcap_tip',
@@ -93,13 +93,13 @@ function shortcode_basic_tags_theme() {
 }
 
 /**
- * Insert a span around the text with highlight css class
+ * Inserts a span with highlight css class around the text
  *
  * Calling
  * [highlight]text[/highlight]
  *
  *
- * If the length empty or invalid, between 1-99, the length will be 8
+ * If the length is empty or invalid, between 1-99, the length will be 8
  *
  */
 function shortcode_basic_tags_shortcode_highlight($attrs, $text) {
@@ -158,10 +158,10 @@ function shortcode_basic_tags_shortcode_button_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[button path="path" (class="additional class")]text[/button]') . '</strong> ';
   if ($long) {
-    $output[] = t('Inserts a link formatted like a button. Use url parameter for the link.'). '</p>';
+    $output[] = t('Inserts a link formatted as a button. Use the url parameter for the link.') . '</p>';
   }
   else {
-    $output[] = t('Inserts a link formatted like a button. The <em>path</em> parameter provides the link target (default is the front page).
+    $output[] = t('Inserts a link formatted like as a button. The <em>path</em> parameter provides the link target (the default is the front page).
     The <em>title</em> will be formatted as a link title (small tooltip over the link - helps for SEO).
     Additional class names can be added by the <em>class</em> parameter.') . '</p>';
   }
@@ -266,7 +266,7 @@ function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[quote (class="additional class" | author="author name")]text[/quote]') . '</strong> ';
     if ($long) {
-      $output[] = t('Formats the text like a quote.') . '</p>';
+      $output[] = t('Formats the text like as a quote.') . '</p>';
       $output[] = '<p>' . t('Sample css:') . '</p>';
       $output[] = '<code>
         .quote {
@@ -292,7 +292,7 @@ function shortcode_basic_tags_shortcode_quote_tip($format, $long) {
         </code><p>&nbsp</p>';
     }
     else {
-      $output[] = t('Formats the text like a quote. Additional class names can be added by the <em>class</em> parameter.') . '</p>';
+      $output[] = t('Formats the text like as a quote. Additional class names can be added by the <em>class</em> parameter.') . '</p>';
     }
 
   return implode(' ', $output);
@@ -318,7 +318,7 @@ function theme_shortcode_img($vars) {
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[img (class="additional class"|alt="alt text")]image url[/img]') . '</strong> ';
-  $output[] = t('Inserts a image based on the given image url.') . '</p>';
+  $output[] = t('Inserts an image based on the given image url.') . '</p>';
 
   return implode(' ', $output);
 }
@@ -352,12 +352,12 @@ function shortcode_basic_tags_shortcode_item_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[item (class="additional class"|id=item id|type=div,d,span,s)]text[/item]') . '</strong> ';
   if ($long) {
-    $output[] = t('Inserts a html item (type parameter = div or span) around the given text.') . '</p>';
-    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. Id parameter gives the html an unique css id.') . '</p>';
+    $output[] = t('Inserts an html item (type parameter = div or span) around the given text.') . '</p>';
+    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. The id parameter gives the html an unique css id.') . '</p>';
     $output[] = '<p>&nbsp</p>';
   }
   else {
-    $output[] = t('Inserts a html item (div or span) around the given text.') . '</p>';
+    $output[] = t('Inserts an html item (div or span) around the given text.') . '</p>';
   }
 
   return implode(' ', $output);
@@ -402,12 +402,12 @@ function shortcode_basic_tags_shortcode_clear_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[clear (class="additional class"|id=item id|type=div,d,span,s)]text[/clear]') . '</strong>';
   if ($long) {
-    $output[] = t('Inserts a float clearer html item (type parameter = div or span) around the given text. Use the simple [clear /].') . '</p>';
-    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. Id parameter gives the html an unique css id.') . '</p>';
+    $output[] = t('Inserts a float-clearing html item (type parameter = div or span) around the given text. Use the simple [clear /].') . '</p>';
+    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. The id parameter gives the html an unique css id.') . '</p>';
     $output[] = '<p>&nbsp</p>';
   }
   else {
-    $output[] = t('Inserts a float clearer html item (div or span) around the given text. Use the simple [clear /].') . '</p>';
+    $output[] = t('Inserts a float-clearing html item (div or span) around the given text. Use the simple [clear /].') . '</p>';
   }
 
   return implode(' ', $output);
@@ -457,12 +457,12 @@ function shortcode_basic_tags_shortcode_link_tip($format, $long) {
   $output = array();
   $output[] = '<p><strong>' . t('[link path="the drupal path" (title="link title"|class="additional class"|id=item id|style=css style rules)]text[/link]') . '</strong>';
   if ($long) {
-    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you gives back the url only.') . '</p>';
-    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. Id parameter gives the html an unique css id. In the <em>style</em> parameter you can use your own css definition.') . '</p>';
+    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you get back the url only.') . '</p>';
+    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. The id parameter gives the html an unique css id. In the <em>style</em> parameter you can use your own css definition.') . '</p>';
     $output[] = '<p>&nbsp</p>';
   }
   else {
-    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you gives back the url only.') . '</p>';
+    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you get back the url only.') . '</p>';
   }
 
   return implode(' ', $output);
