@@ -63,6 +63,7 @@ function shortcode_filter_info() {
     'process callback' => '_shortcode_process', 
     'settings callback' => '_shortcode_settings_form',
     'tips callback' => '_shortcode_filter_tips',
+    //'cache' => FALSE,
   );
   $filters['shortcode_text_corrector'] = array(
     'title' => t('Shortcodes - html corrector'), 
