@@ -7,7 +7,7 @@
 function shortcode_basic_tags_shortcode_info() {
   $shortcodes['quote'] = array(
     'title' => t('Quote'), 
-    'description' => t('Replace a given text formatted like as a quote.'),
+    'description' => t('Replace the given text formatted like as a quote.'),
     'process callback' => 'shortcode_basic_tags_shortcode_quote', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'attributes callback' => "shortcode_basic_tags_quote_attributes",
@@ -36,7 +36,7 @@ function shortcode_basic_tags_shortcode_info() {
   );
   $shortcodes['dropcap'] = array(
     'title' => t('Dropcap'), 
-    'description' => t('Replace a given text formatted like as a dropcap.'),
+    'description' => t('Replace the given text formatted like as a dropcap.'),
     'process callback' => 'shortcode_basic_tags_shortcode_dropcap', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_dropcap_tip',
@@ -50,7 +50,7 @@ function shortcode_basic_tags_shortcode_info() {
   );
   $shortcodes['clear'] = array(
     'title' => t('Clear'), 
-    'description' => t('Insert a clearer div for a proper layout.'), 
+    'description' => t('Insert a float-clearing div for a proper layout.'),
     'process callback' => 'shortcode_basic_tags_shortcode_clear', 
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_clear_tip',
