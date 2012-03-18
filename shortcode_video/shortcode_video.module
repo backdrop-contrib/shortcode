@@ -48,14 +48,12 @@ function shortcode_video_macro_process($attrs, $text) {
   // which provider given
   $m = array();
   preg_match('!^.*\://(.*?\.)?([^\.]*?)\.([^\.]*?)\/(.*?)$!', $text, $m);
-
   if (empty($m[1])) {
     // something wrong with the text
     return theme('shortcode_video_embed_error', array('video_url' => $text));
   }
 
   $provider = strtolower($m[2]);
-
   $output = '';
   switch($provider) {
     case 'youtube':
@@ -110,7 +108,7 @@ function _shortcode_video_get_youtube_videoid($m) {
   $type = substr($m[4], 0, 5);
   if ('watch' == $type) {
     $mm = array();
-    preg_match('!\?v=(.*?)\&!', $m[4], $mm);
+    preg_match('!\?v=([^\&]*?)$!', $m[4], $mm);
     if (!empty($mm[1])) {
       $params['video_id'] = $mm[1];
       $params['video_url'] = 'http://www.youtube.com/embed/' . $mm[1] . '?rel=0';
@@ -180,5 +178,5 @@ function theme_shortcode_video_embed_youtube($variables) {
 
   $width = $width ? ' width="' . $width . '"' : '';
   $height = $height ? ' height="' . $height . '"' : '';
-  return '<iframe' . $width . $height . ' src="' . $variables['video_url'] . '" frameborder="0" allowfullscreen></iframe >';
+  return '<iframe' . $width . $height . ' src="' . $variables['video_url'] . '" frameborder="0" allowfullscreen></iframe>';
 }
