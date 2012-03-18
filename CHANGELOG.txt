@@ -5,6 +5,13 @@ Shortcode 7.x-2.x, xxxx-xx-xx
 Shortcode 7.x-2.x, 2012-03-10                                                                                                               
 ------------------------------ 
 
+by balagan: Corrected the module english words.
+by Denes.Szabo: Added the initial version of the video macro shortcode module.
+
+
+Shortcode 7.x-2.x, 2012-03-10                                                                                                               
+------------------------------ 
+
 by Denes.Szabo: Allowed to escape codes.
 by Denes.Szabo: Updated the code tips, now all translateable.
 by Denes.Szabo: Updated to use new attr handling method to help code editors.
