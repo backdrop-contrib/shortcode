@@ -107,7 +107,7 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
       '#type' => 'checkbox',
       '#title' => t('Enable %name shortcode', array('%name' => $shortcode['title'])),
       '#default_value' => array(),
-      '#description' => 'Enable or disable this shortcode in this input format',
+      '#description' => isset($shortcode['description']) ? $shortcode['description'] : t('Enable or disable this shortcode in this input format'),
     );
 
     if (!empty($filter->settings[$key])) {
