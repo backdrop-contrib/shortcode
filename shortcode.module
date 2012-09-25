@@ -173,6 +173,7 @@ function _shortcode_process($text, $filter) {
     }
 
     $escaped = FALSE;
+
     if ((substr($c, 0, 2) == '[[') && (substr($c, -2, 2) == ']]')) {
       $escaped = TRUE;
       // remove outer []
@@ -262,14 +263,13 @@ function _shortcode_process($text, $filter) {
         array_unshift($heap_index, $tag);
         array_unshift($heap, implode(' ', $ts));
       }
-    }
+    } // escaped or !shortcode
     else {
       // not found a pair?
       array_unshift($heap_index, '_string_');
       array_unshift($heap, $c);
     }
-
-  }
+  } // foreach
 
   return(implode('', array_reverse($heap)));
 }
