@@ -125,6 +125,7 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
  * Tags cache
  * @param $tags
  *
+ * @return mixed
  * @access private
  */
 function _shortcode_tags($tags = NULL) {
@@ -288,7 +289,6 @@ function _shortcode_postprocess_text($text, $filter) {
     '!(<div.*?>)\s*</p>!is',
   );
 
-  //$replacements = array('!!\\2', '###\\2', '@@@\\1');
   $replacements = array('', '\\2', '\\2', '\\1', '\\1');
   return preg_replace($patterns, $replacements, $text);
 }
@@ -404,7 +404,7 @@ function _shortcode_get_shortcode_regex($names) {
  * supported by the caller and given as a list. The returned attributes will
  * only contain the attributes in the $pairs list.
  *
- * If the $atts list has unsupported attributes, then they will be ignored and
+ * If the $attrs list has unsupported attributes, then they will be ignored and
  * removed from the final returned list.
  *
  * @param array $pairs Entire list of supported attributes and their defaults.
