@@ -307,11 +307,6 @@ function _shortcode_process_tag($m) {
   // get tags from static cache
   $shortcodes = _shortcode_tags();
 
-  // allow [[foo]] syntax for escaping a tag
-//  if ($m[1] == '[' && $m[5] == ']') {
-//    return substr($m[0], 1, -1);
-//  }
-
   $tag = $m[2];
 
   if (!empty($shortcodes[$tag])) {
