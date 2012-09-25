@@ -450,10 +450,13 @@ function shortcode_bool($var) {
 
 /**
  * Class parameter helper function
+ *
  * @param $class
  * @param $default
+ *
+ * @return string
  */
-function shortcode_add_class($class='', $default='') {
+function shortcode_add_class($class = '', $default = '') {
   if ($class) {
     if (! is_array($class)) {
       $class = explode(' ', $class);
