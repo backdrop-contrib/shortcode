@@ -297,10 +297,6 @@ function _shortcode_postprocess_text($text, $filter) {
  * Regular Expression callable for do_shortcode() for calling shortcode hook.
  * @see get_shortcode_regex for details of the match array contents.
  *
- * @since 2.5
- * @access private
- * @uses $shortcode_tags
- *
  * @param array $m Regular expression match array
  * @return mixed False on failure.
  */
@@ -349,34 +345,32 @@ function _shortcode_process_tag($m) {
  * attribute as the value in the key/value pair. This allows for easier
  * retrieval of the attributes, since all attributes have to be known.
  *
- * @since 2.5
- *
  * @param string $text
  * @return array List of attributes and their value.
  */
 function _shortcode_parse_attrs($text) {
-  $atts = array();
+  $attrs = array();
   $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
   $text = preg_replace("/[\x{00a0}\x{200b}]+/u", " ", $text);
   $text = html_entity_decode($text);
-  if ( preg_match_all($pattern, $text, $match, PREG_SET_ORDER) ) {
+  if (preg_match_all($pattern, $text, $match, PREG_SET_ORDER) ) {
     foreach ($match as $m) {
       if (!empty($m[1]))
-        $atts[strtolower($m[1])] = stripcslashes($m[2]);
+        $attrs[strtolower($m[1])] = stripcslashes($m[2]);
       elseif (!empty($m[3]))
-        $atts[strtolower($m[3])] = stripcslashes($m[4]);
+        $attrs[strtolower($m[3])] = stripcslashes($m[4]);
       elseif (!empty($m[5]))
-        $atts[strtolower($m[5])] = stripcslashes($m[6]);
+        $attrs[strtolower($m[5])] = stripcslashes($m[6]);
       elseif (isset($m[7]) and strlen($m[7]))
-        $atts[] = stripcslashes($m[7]);
+        $attrs[] = stripcslashes($m[7]);
       elseif (isset($m[8]))
-        $atts[] = stripcslashes($m[8]);
+        $attrs[] = stripcslashes($m[8]);
     }
   }
   else {
-    $atts = ltrim($text);
+    $attrs = ltrim($text);
   }
-  return $atts;
+  return $attrs;
 }
 
 /**
@@ -393,6 +387,7 @@ function _shortcode_parse_attrs($text) {
  * 4 - The self closing /
  * 5 - The content of a shortcode when it wraps some content.
  *
+ * @param $names The tag names
  * @return string The shortcode search regular expression
  */
 function _shortcode_get_shortcode_regex($names) {
@@ -412,10 +407,9 @@ function _shortcode_get_shortcode_regex($names) {
  * If the $atts list has unsupported attributes, then they will be ignored and
  * removed from the final returned list.
  *
- * @since 2.5
- *
  * @param array $pairs Entire list of supported attributes and their defaults.
- * @param array $atts User defined attributes in shortcode tag.
+ * @param array $attrs User defined attributes in shortcode tag.
+ *
  * @return array Combined and filtered attribute list.
  */
 function shortcode_attrs($pairs, $attrs) {
@@ -453,7 +447,6 @@ function shortcode_bool($var) {
 
   return $res;
 }
-
 
 /**
  * Class parameter helper function
