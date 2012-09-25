@@ -176,8 +176,11 @@ function _shortcode_process($text, $filter) {
 
     if ((substr($c, 0, 2) == '[[') && (substr($c, -2, 2) == ']]')) {
       $escaped = TRUE;
-      // remove outer []
-      $c = substr($c, 1, -1);
+      // checking media tags
+      if ((substr($c, 0, 3) != '{') && (substr($c, -3, 1) != '}')) {
+        // remove outer []
+        $c = substr($c, 1, -1);
+      }
     }
     // shortcode or not
     if (!$escaped && ($c[0] == '[') && (substr($c, -1, 1) == ']')) {
