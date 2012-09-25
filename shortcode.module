@@ -18,7 +18,7 @@ function shortcode_list_all($reset = FALSE) {
     $shortcodes = array();
     $shortcodes += module_invoke_all('shortcode_info');
   }
-  
+
   return $shortcodes;
 }
 
@@ -36,14 +36,14 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
     return $shortcodes_enabled[$format->format];
   }
   $shortcodes_enabled[$format->format] = array();
-  
+
   $shortcodes = shortcode_list_all($reset);
   $filters = filter_list_format($format->format);
 
   if (empty($filters['shortcode'])) {
     return array();
   }
-  
+
   foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
     if ($enabled) {
       $shortcodes_enabled[$format->format][$name] = $shortcodes[$name];
@@ -58,21 +58,21 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
 */
 function shortcode_filter_info() {
   $filters['shortcode'] = array(
-    'title' => t('Shortcodes'), 
+    'title' => t('Shortcodes'),
     'description' => t('Provides WP like shortcodes to this text format.'),
-    'process callback' => '_shortcode_process', 
+    'process callback' => '_shortcode_process',
     'settings callback' => '_shortcode_settings_form',
     'tips callback' => '_shortcode_filter_tips',
     //'cache' => FALSE,
   );
   $filters['shortcode_text_corrector'] = array(
-    'title' => t('Shortcodes - html corrector'), 
+    'title' => t('Shortcodes - html corrector'),
     'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
     'process callback' => '_shortcode_postprocess_text',
   );
- 
+
   return $filters;
-}  
+}
 
 /**
 * Filter tips callback
@@ -358,6 +358,7 @@ function _shortcode_parse_attrs($text) {
   $atts = array();
   $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
   $text = preg_replace("/[\x{00a0}\x{200b}]+/u", " ", $text);
+  $text = html_entity_decode($text);
   if ( preg_match_all($pattern, $text, $match, PREG_SET_ORDER) ) {
     foreach ($match as $m) {
       if (!empty($m[1]))
@@ -439,7 +440,7 @@ function shortcode_attrs($pairs, $attrs) {
  */
 function shortcode_bool($var) {
   switch (strtolower($var)) {
-    case false:
+    case FALSE:
     case 'false':
     case 'no':
     case '0':
