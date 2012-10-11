@@ -11,11 +11,11 @@ index 9d9d95e..db23db2
 --- a/shortcode.api.php
 +++ b/shortcode.api.php
 @@ -7,8 +7,8 @@
-
+ 
  /**
   * hook_shortcode_info()
-- * Declare shortcodes
-- *
+- * Declare shortcodes 
+- * 
 + * Declare shortcodes
 + *
   * @return
@@ -25,7 +25,7 @@ index 9d9d95e..db23db2
   *     actual shortcodeing.
   *   - tips callback: The name of a function that returns end-user-facing shortcode
   *     usage guidelines for the shortcode.
-- *
+- *   
 + *   - WYSIWYG callback: The name of a function that returns a FAPI array with
 + *     configuration input for the shortcode
 + *
@@ -33,9 +33,9 @@ index 9d9d95e..db23db2
  function hook_shortcode_info() {
    // Quote shortcode example
    $shortcodes['quote'] = array(
--    'title' => t('Quote'),
--    'description' => t('Replace a given text formatted like a quote.'),
--    'process callback' => 'shortcode_basic_tags_shortcode_quote',
+-    'title' => t('Quote'), 
+-    'description' => t('Replace a given text formatted like a quote.'), 
+-    'process callback' => 'shortcode_basic_tags_shortcode_quote', 
 +    'title' => t('Quote'),
 +    'description' => t('Replace a given text formatted like a quote.'),
 +    'process callback' => 'shortcode_basic_tags_shortcode_quote',
@@ -44,10 +44,10 @@ index 9d9d95e..db23db2
 +    'attributes callback' => '_shortcode_settings_form',
      'default settings' => array(),
    );
--
+-  
 +
    return $shortcodes;
--}
+-} 
 \ No newline at end of file
 +}
 \ No newline at end of file
@@ -58,9 +58,9 @@ index dfae88f..6445ed5
 --- a/shortcode.info
 +++ b/shortcode.info
 @@ -1,5 +1,5 @@
--name = Shortcode
--description = Provides shortcodes filter framework and API (like WP shortcodes)
--package = Shortcode
+-name = Shortcode                                                                               
+-description = Provides shortcodes filter framework and API (like WP shortcodes)                                                      
+-package = Shortcode                                                                                              
 +name = Shortcode
 +description = Provides shortcodes filter framework and API (like WP shortcodes)
 +package = Shortcode
@@ -78,24 +78,24 @@ index 3b91b57..a1844b7
      $shortcodes = array();
      $shortcodes += module_invoke_all('shortcode_info');
    }
--
+-  
 +
    return $shortcodes;
  }
-
+ 
 @@ -36,14 +36,14 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
      return $shortcodes_enabled[$format->format];
    }
    $shortcodes_enabled[$format->format] = array();
--
+-  
 +
    $shortcodes = shortcode_list_all($reset);
    $filters = filter_list_format($format->format);
-
+ 
    if (empty($filters['shortcode'])) {
      return array();
    }
--
+-  
 +
    foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
      if ($enabled) {
@@ -104,27 +104,27 @@ index 3b91b57..a1844b7
  */
  function shortcode_filter_info() {
    $filters['shortcode'] = array(
--    'title' => t('Shortcodes'),
+-    'title' => t('Shortcodes'), 
 +    'title' => t('Shortcodes'),
      'description' => t('Provides WP like shortcodes to this text format.'),
--    'process callback' => '_shortcode_process',
+-    'process callback' => '_shortcode_process', 
 +    'process callback' => '_shortcode_process',
      'settings callback' => '_shortcode_settings_form',
      'tips callback' => '_shortcode_filter_tips',
      //'cache' => FALSE,
    );
    $filters['shortcode_text_corrector'] = array(
--    'title' => t('Shortcodes - html corrector'),
+-    'title' => t('Shortcodes - html corrector'), 
 +    'title' => t('Shortcodes - html corrector'),
      'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
      'process callback' => '_shortcode_postprocess_text',
    );
--
+- 
 +
    return $filters;
--}
+-}  
 +}
-
+ 
  /**
  * Filter tips callback
 diff --git a/shortcode_basic_tags/shortcode_basic_tags.info b/shortcode_basic_tags/shortcode_basic_tags.info
@@ -134,9 +134,9 @@ index b78d874..5120860
 --- a/shortcode_basic_tags/shortcode_basic_tags.info
 +++ b/shortcode_basic_tags/shortcode_basic_tags.info
 @@ -1,6 +1,6 @@
--name = Shortcode Basic Tags
--description = Provides basic shortcode tags like highlight, dropcap, etc.
--package = Shortcode
+-name = Shortcode Basic Tags                                                                             
+-description = Provides basic shortcode tags like highlight, dropcap, etc.                                                       
+-package = Shortcode                                                                                              
 +name = Shortcode Basic Tags
 +description = Provides basic shortcode tags like highlight, dropcap, etc.
 +package = Shortcode
@@ -207,11 +207,11 @@ index 408363c..f6ac3ad
         var content = '<!--shortcode_wysiwyg-->';
       }
      */
--    Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);
+-    Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);    
 +    Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);
    },
--
--
+-  
+-  
 +
 +
    insert_form: function (data, settings, instanceId) {
@@ -231,7 +231,7 @@ index 408363c..f6ac3ad
            dialogdiv.dialog('destroy').remove();
 @@ -59,12 +63,12 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
          var editor_id = instanceId;
-
+ 
          var options = [];
 -        dialogdiv.contents().find('input,select')
 +        dialogdiv.contents().find('.form-item').not(':hidden').find('input,select')
@@ -243,7 +243,7 @@ index 408363c..f6ac3ad
 +              options.push(name + '=' + '"' + val + '"');
              }
            });
-
+ 
 @@ -94,13 +98,14 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
          close: dialogClose
        });
@@ -251,12 +251,12 @@ index 408363c..f6ac3ad
 +      Drupal.attachBehaviors();
      });
    },
--
+-    
 +
    insertIntoEditor: function (shortcode, editor_id) {
      Drupal.wysiwyg.instances[editor_id].insert(shortcode);
    },
--
+-  
 +
    /**
     * Prepare all plain-text contents of this plugin with HTML representations.
@@ -272,7 +272,7 @@ index 650ca3a..102bc23
 +++ b/shortcode_wysiwyg/shortcode_wysiwyg.module
 @@ -12,7 +12,7 @@ function shortcode_wysiwyg_wysiwyg_include_directory($type) {
  }
-
+ 
  function shortcode_wysiwyg_form_alter(&$form, $form_state, $form_id) {
 -  if (strpos($form_id, 'node_form') !== FALSE || strpos($form_id, 'comment') !== FALSE) {
 +  if (strpos($form_id, 'node_form') !== FALSE OR strpos($form_id, 'comment') !== FALSE OR strpos($form_id, 'block') !== FALSE) {
@@ -283,23 +283,23 @@ index 650ca3a..102bc23
    $options = $form = array();
    module_load_include('inc', 'shortcode', 'shortcode');
    drupal_set_title(t('Shortcode'));
--
+-  
 +
    $format_id = str_replace("format", "", $format_id); /// euhj...wtf...
    $shortcodes = shortcode_list_all_enabled($format_id);
-
+ 
    foreach($shortcodes as $name => $shortcode) {
      $options[$name] = $shortcode['title'];
--  }
+-  }  
 +  }
-
+ 
    $form['shortcode'] = array(
      '#type' => 'select',
 @@ -49,9 +49,9 @@ function shortcode_wysiwyg_form($form, &$form_state, $format_id) {
      '#options' => $options,
      '#description' => t('This shortcode will be inserted in your textfield')
    );
--
+-  
 +
    foreach($shortcodes as $name => $shortcode) {
 -    if ($shortcode['attributes callback']) {
