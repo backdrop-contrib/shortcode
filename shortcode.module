@@ -227,7 +227,7 @@ function _shortcode_process($text, $filter) {
           $tag = array_shift($heap_index);
           $heap_text = array_shift($heap);
 
-          if($closing_tag == $tag) {
+          if ($closing_tag == $tag) {
             // process the whole tag
             $m = array(
               $tag . ' ' . $heap_text,
