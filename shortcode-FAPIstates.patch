@@ -257,8 +257,6 @@ index 650ca3a..102bc23
 
    foreach($shortcodes as $name => $shortcode) {
      $options[$name] = $shortcode['title'];
--  }
-+  }
 
    $form['shortcode'] = array(
      '#type' => 'select',
