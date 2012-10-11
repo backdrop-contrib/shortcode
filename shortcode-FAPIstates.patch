@@ -1,0 +1,309 @@
+diff --git a/CHANGELOG.txt b/CHANGELOG.txt
+old mode 100644
+new mode 100755
+diff --git a/README.txt b/README.txt
+old mode 100644
+new mode 100755
+diff --git a/shortcode.api.php b/shortcode.api.php
+old mode 100644
+new mode 100755
+index 9d9d95e..db23db2
+--- a/shortcode.api.php
++++ b/shortcode.api.php
+@@ -7,8 +7,8 @@
+ 
+ /**
+  * hook_shortcode_info()
+- * Declare shortcodes 
+- * 
++ * Declare shortcodes
++ *
+  * @return
+  *   An associative array of shortcodes, whose keys are internal shortcode names,
+  *   which should be unique..
+@@ -25,18 +25,21 @@
+  *     actual shortcodeing.
+  *   - tips callback: The name of a function that returns end-user-facing shortcode
+  *     usage guidelines for the shortcode.
+- *   
++ *   - WYSIWYG callback: The name of a function that returns a FAPI array with
++ *     configuration input for the shortcode
++ *
+  */
+ function hook_shortcode_info() {
+   // Quote shortcode example
+   $shortcodes['quote'] = array(
+-    'title' => t('Quote'), 
+-    'description' => t('Replace a given text formatted like a quote.'), 
+-    'process callback' => 'shortcode_basic_tags_shortcode_quote', 
++    'title' => t('Quote'),
++    'description' => t('Replace a given text formatted like a quote.'),
++    'process callback' => 'shortcode_basic_tags_shortcode_quote',
+     //'settings callback' => '_shortcode_settings_form', TODO
+     'tips callback' => 'shortcode_basic_tags_shortcode_quote_tip',
++    'attributes callback' => '_shortcode_settings_form',
+     'default settings' => array(),
+   );
+-  
++
+   return $shortcodes;
+-} 
+\ No newline at end of file
++}
+\ No newline at end of file
+diff --git a/shortcode.info b/shortcode.info
+old mode 100644
+new mode 100755
+index dfae88f..6445ed5
+--- a/shortcode.info
++++ b/shortcode.info
+@@ -1,5 +1,5 @@
+-name = Shortcode                                                                               
+-description = Provides shortcodes filter framework and API (like WP shortcodes)                                                      
+-package = Shortcode                                                                                              
++name = Shortcode
++description = Provides shortcodes filter framework and API (like WP shortcodes)
++package = Shortcode
+ core = 7.x
+-dependencies[] = filter
++dependencies[] = filter
+\ No newline at end of file
+diff --git a/shortcode.module b/shortcode.module
+old mode 100644
+new mode 100755
+index 3b91b57..a1844b7
+--- a/shortcode.module
++++ b/shortcode.module
+@@ -18,7 +18,7 @@ function shortcode_list_all($reset = FALSE) {
+     $shortcodes = array();
+     $shortcodes += module_invoke_all('shortcode_info');
+   }
+-  
++
+   return $shortcodes;
+ }
+ 
+@@ -36,14 +36,14 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
+     return $shortcodes_enabled[$format->format];
+   }
+   $shortcodes_enabled[$format->format] = array();
+-  
++
+   $shortcodes = shortcode_list_all($reset);
+   $filters = filter_list_format($format->format);
+ 
+   if (empty($filters['shortcode'])) {
+     return array();
+   }
+-  
++
+   foreach($filters['shortcode']->settings as $name => $enabled) { // Run through all shortcodes
+     if ($enabled) {
+       $shortcodes_enabled[$format->format][$name] = $shortcodes[$name];
+@@ -58,21 +58,21 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
+ */
+ function shortcode_filter_info() {
+   $filters['shortcode'] = array(
+-    'title' => t('Shortcodes'), 
++    'title' => t('Shortcodes'),
+     'description' => t('Provides WP like shortcodes to this text format.'),
+-    'process callback' => '_shortcode_process', 
++    'process callback' => '_shortcode_process',
+     'settings callback' => '_shortcode_settings_form',
+     'tips callback' => '_shortcode_filter_tips',
+     //'cache' => FALSE,
+   );
+   $filters['shortcode_text_corrector'] = array(
+-    'title' => t('Shortcodes - html corrector'), 
++    'title' => t('Shortcodes - html corrector'),
+     'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
+     'process callback' => '_shortcode_postprocess_text',
+   );
+- 
++
+   return $filters;
+-}  
++}
+ 
+ /**
+ * Filter tips callback
+diff --git a/shortcode_basic_tags/shortcode_basic_tags.info b/shortcode_basic_tags/shortcode_basic_tags.info
+old mode 100644
+new mode 100755
+index b78d874..5120860
+--- a/shortcode_basic_tags/shortcode_basic_tags.info
++++ b/shortcode_basic_tags/shortcode_basic_tags.info
+@@ -1,6 +1,6 @@
+-name = Shortcode Basic Tags                                                                             
+-description = Provides basic shortcode tags like highlight, dropcap, etc.                                                       
+-package = Shortcode                                                                                              
++name = Shortcode Basic Tags
++description = Provides basic shortcode tags like highlight, dropcap, etc.
++package = Shortcode
+ core = 7.x
+ dependencies[] = filter
+-dependencies[] = shortcode
+\ No newline at end of file
++dependencies[] = shortcode
+diff --git a/shortcode_basic_tags/shortcode_basic_tags.module b/shortcode_basic_tags/shortcode_basic_tags.module
+old mode 100644
+new mode 100755
+diff --git a/shortcode_embed_content/shortcode_embed_content.info b/shortcode_embed_content/shortcode_embed_content.info
+old mode 100644
+new mode 100755
+index 2400049..29c4bcd
+--- a/shortcode_embed_content/shortcode_embed_content.info
++++ b/shortcode_embed_content/shortcode_embed_content.info
+@@ -3,4 +3,4 @@ description = "Provides a shortcode tag for embedding a node content into text."
+ package = Shortcode
+ core = 7.x
+ dependencies[] = filter
+-dependencies[] = shortcode
++dependencies[] = shortcode
+\ No newline at end of file
+diff --git a/shortcode_embed_content/shortcode_embed_content.module b/shortcode_embed_content/shortcode_embed_content.module
+old mode 100644
+new mode 100755
+diff --git a/shortcode_embed_content/theme/node-shortcode--default.tpl.php b/shortcode_embed_content/theme/node-shortcode--default.tpl.php
+old mode 100644
+new mode 100755
+diff --git a/shortcode_embed_content/theme/node-shortcode--image_gallery.tpl.php b/shortcode_embed_content/theme/node-shortcode--image_gallery.tpl.php
+old mode 100644
+new mode 100755
+diff --git a/shortcode_video/shortcode_video.info b/shortcode_video/shortcode_video.info
+old mode 100644
+new mode 100755
+index b2cad14..1b40935
+--- a/shortcode_video/shortcode_video.info
++++ b/shortcode_video/shortcode_video.info
+@@ -3,4 +3,4 @@ description = Provides easy video embedding to contents. Supports YouTube sharin
+ package = Shortcode
+ core = 7.x
+ dependencies[] = filter
+-dependencies[] = shortcode
++dependencies[] = shortcode
+\ No newline at end of file
+diff --git a/shortcode_video/shortcode_video.module b/shortcode_video/shortcode_video.module
+old mode 100644
+new mode 100755
+diff --git a/shortcode_wysiwyg/plugins/shortcode_wysiwyg.inc b/shortcode_wysiwyg/plugins/shortcode_wysiwyg.inc
+old mode 100644
+new mode 100755
+diff --git a/shortcode_wysiwyg/plugins/shortcode_wysiwyg/images/insert.png b/shortcode_wysiwyg/plugins/shortcode_wysiwyg/images/insert.png
+old mode 100644
+new mode 100755
+index 9ecf8e8..44191a6
+Binary files a/shortcode_wysiwyg/plugins/shortcode_wysiwyg/images/insert.png and b/shortcode_wysiwyg/plugins/shortcode_wysiwyg/images/insert.png differ
+diff --git a/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.css b/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.css
+old mode 100644
+new mode 100755
+diff --git a/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.js b/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.js
+old mode 100644
+new mode 100755
+index 408363c..f6ac3ad
+--- a/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.js
++++ b/shortcode_wysiwyg/plugins/shortcode_wysiwyg/shortcode_wysiwyg.js
+@@ -37,16 +37,20 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
+        var content = '<!--shortcode_wysiwyg-->';
+      }
+     */
+-    Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);    
++    Drupal.wysiwyg.plugins.shortcode_wysiwyg.insert_form(data, settings, instanceId);
+   },
+-  
+-  
++
++
+   insert_form: function (data, settings, instanceId) {
+     form_id = Drupal.settings.shortcode_wysiwyg.current_form;
+     // Location, where to fetch the dialog.
+     var aurl = Drupal.settings.basePath + 'index.php?q=shortcode_wysiwyg/'+ Drupal.wysiwyg.instances[instanceId].format +'/' + form_id;
+-    dialogdiv = jQuery('<div id="shortcode-insert-dialog"></div>');
+-    dialogdiv.load(aurl + " .content #shortcode-wysiwyg-form", function(){
++    var tmpdiv = $('<div id="shortcode-wysiwyg-form-wrapper" class="element-invisible"></div>');
++    var dialogdiv = $('<div id="shortcode-insert-dialog"></div>');
++    // We need to load the whole document so that scripts get executed
++    tmpdiv.load(aurl, function(){
++      shortcodeForm = $(this).find('#shortcode-wysiwyg-form');
++      dialogdiv.html(shortcodeForm);
+       var dialogClose = function () {
+         try {
+           dialogdiv.dialog('destroy').remove();
+@@ -59,12 +63,12 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
+         var editor_id = instanceId;
+ 
+         var options = [];
+-        dialogdiv.contents().find('input,select')
++        dialogdiv.contents().find('.form-item').not(':hidden').find('input,select')
+           .not('#edit-shortcode,[type="hidden"]')
+           .each(function () {
+             var name = $(this).attr('name'), val = $(this).val();
+             if (val.length) {
+-              options.push(name + '=' + val);
++              options.push(name + '=' + '"' + val + '"');
+             }
+           });
+ 
+@@ -94,13 +98,14 @@ Drupal.wysiwyg.plugins.shortcode_wysiwyg = {
+         close: dialogClose
+       });
+       dialogdiv.dialog("open");
++      Drupal.attachBehaviors();
+     });
+   },
+-    
++
+   insertIntoEditor: function (shortcode, editor_id) {
+     Drupal.wysiwyg.instances[editor_id].insert(shortcode);
+   },
+-  
++
+   /**
+    * Prepare all plain-text contents of this plugin with HTML representations.
+    *
+diff --git a/shortcode_wysiwyg/shortcode_wysiwyg.info b/shortcode_wysiwyg/shortcode_wysiwyg.info
+old mode 100644
+new mode 100755
+diff --git a/shortcode_wysiwyg/shortcode_wysiwyg.module b/shortcode_wysiwyg/shortcode_wysiwyg.module
+old mode 100644
+new mode 100755
+index 650ca3a..102bc23
+--- a/shortcode_wysiwyg/shortcode_wysiwyg.module
++++ b/shortcode_wysiwyg/shortcode_wysiwyg.module
+@@ -12,7 +12,7 @@ function shortcode_wysiwyg_wysiwyg_include_directory($type) {
+ }
+ 
+ function shortcode_wysiwyg_form_alter(&$form, $form_state, $form_id) {
+-  if (strpos($form_id, 'node_form') !== FALSE || strpos($form_id, 'comment') !== FALSE) {
++  if (strpos($form_id, 'node_form') !== FALSE OR strpos($form_id, 'comment') !== FALSE OR strpos($form_id, 'block') !== FALSE) {
+     drupal_add_library('system', 'ui.dialog');
+     drupal_add_library('system', 'ui.draggable');
+     drupal_add_js(array('shortcode_wysiwyg' => array('current_form' => $form['form_build_id']['#value'])), 'setting');
+@@ -35,13 +35,13 @@ function shortcode_wysiwyg_form($form, &$form_state, $format_id) {
+   $options = $form = array();
+   module_load_include('inc', 'shortcode', 'shortcode');
+   drupal_set_title(t('Shortcode'));
+-  
++
+   $format_id = str_replace("format", "", $format_id); /// euhj...wtf...
+   $shortcodes = shortcode_list_all_enabled($format_id);
+ 
+   foreach($shortcodes as $name => $shortcode) {
+     $options[$name] = $shortcode['title'];
+-  }  
++  }
+ 
+   $form['shortcode'] = array(
+     '#type' => 'select',
+@@ -49,9 +49,9 @@ function shortcode_wysiwyg_form($form, &$form_state, $format_id) {
+     '#options' => $options,
+     '#description' => t('This shortcode will be inserted in your textfield')
+   );
+-  
++
+   foreach($shortcodes as $name => $shortcode) {
+-    if ($shortcode['attributes callback']) {
++    if (isset($shortcode['attributes callback'])) {
+       $form[$name] = call_user_func_array($shortcode['attributes callback'], array(array(), $form_state));
+     }
+   }
