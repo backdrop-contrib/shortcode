@@ -80,7 +80,7 @@ function shortcode_filter_info() {
 function _shortcode_filter_tips($filter, $format, $long = FALSE) {
   $shortcodes = shortcode_list_all_enabled($format);
   $tips = array();
-  $args = func_get_args();
+  // $args = func_get_args();
   foreach ($filter->settings as $name => $enabled) { // Run through all shortcodes
     if ($enabled && !empty($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
       $tips[] = call_user_func_array($shortcodes[$name]['tips callback'], array($format, $long));
@@ -140,6 +140,23 @@ function _shortcode_tags($tags = NULL) {
 }
 
 /**
+ * Checking the given tag is valid shortcode macro or not
+ *
+ * @param $tag
+ *
+ * @return bool TRUE if the $tag is valid macro
+ */
+function shortcode_is_tag($tag) {
+  $tags = _shortcode_tags();
+
+  if (isset($tags[$tag])) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
  * Process the shortcodes according to the text and the text format.
  */
 function _shortcode_process($text, $filter) {
@@ -184,13 +201,24 @@ function _shortcode_process($text, $filter) {
     }
     // shortcode or not
     if (!$escaped && ($c[0] == '[') && (substr($c, -1, 1) == ']')) {
-      // $c contains shortcode
+      // $c maybe contains shortcode macro
 
       // self-closing tag or not
       // remove outer []
+      $original_text = $c;
       $c = substr($c, 1, -1);
+      $c = trim($c);
 
-      if (substr($c, -1, 1) == '/') {
+      $ts = explode(' ', $c);
+      $tag = array_shift($ts);
+      $tag = trim($tag, '/');
+
+      if (!shortcode_is_tag($tag)) {
+        // current tag is not an enabled shortcode macro
+        array_unshift($heap_index, '_string_');
+        array_unshift($heap, $original_text);
+      }
+      elseif (substr($c, -1, 1) == '/') {
         // process a self closing tag - it has / at the end!
         /*
         * 0 - the full tag text?
@@ -199,8 +227,8 @@ function _shortcode_process($text, $filter) {
         * 3 - The shortcode argument list
         * 4 - The content of a shortcode when it wraps some content.
         * */
-        $ts = explode(' ', trim($c));
-        $tag = array_shift($ts);
+//        $ts = explode(' ', $c);
+//        $tag = array_shift($ts);
 
         $m = array(
           $c,
@@ -216,7 +244,6 @@ function _shortcode_process($text, $filter) {
       elseif ($c[0] == '/') {
         // closing tag - process the heap
         $closing_tag = substr($c, 1);
-        //dpr('closing tag: ' . $closing_tag );
 
         $process_heap = array();
         $process_heap_index = array();
@@ -260,8 +287,8 @@ function _shortcode_process($text, $filter) {
       }
       else {
         // starting tag. put to the heap
-        $ts = explode(' ', trim($c));
-        $tag = array_shift($ts);
+//        $ts = explode(' ', $c);
+//        $tag = array_shift($ts);
 
         array_unshift($heap_index, $tag);
         array_unshift($heap, implode(' ', $ts));
@@ -385,7 +412,7 @@ function _shortcode_parse_attrs($text) {
  * The regular expression combines the shortcode tags in the regular expression
  * in a regex class.
  *
- * The regular expresion contains 6 different sub matches to help with parsing.
+ * The regular expression contains 6 different sub matches to help with parsing.
  *
  * 1/6 - An extra [ or ] to allow for escaping shortcodes with double [[]]
  * 2 - The shortcode name
@@ -479,32 +506,3 @@ function shortcode_add_class($class = '', $default = '') {
 } //shortcode_add_class
 
 
-// shortcode implementations
-
-/**
- * Generates a random code
- *
- * Calling
- * [random length=X /]
- *
- * Where X is the length of the random text.
- * If the length empty or invalid, between 1-99, the length will be 8
- *
- */
-function shortcode_shortcode_random($attrs, $text) {
-  extract(shortcode_attrs(array(
-    'length' => 8,
-  ), $attrs));
-
-  $length = intval($length);
-  if (($length < 0) || ($length > 99)) {
-    $length = 8;
-  }
-
-  $text = '';
-  for ($i = 0; $i < $length; ++$i) {
-    $text .= chr(rand(32, 126));
-  }
-
-  return $text;
-}
