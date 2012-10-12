@@ -49,8 +49,7 @@
       var dialogdiv = $('<div id="shortcode-insert-dialog"></div>');
       // We need to load the whole document so that scripts get executed
       tmpdiv.load(aurl, function () {
-        // TODO: need this var?
-        // shortcodeForm = $(this).find('#shortcode-wysiwyg-form');
+        var shortcodeForm = $(this).find('#shortcode-wysiwyg-form');
         dialogdiv.html(shortcodeForm);
         var dialogClose = function () {
           try {
@@ -83,7 +82,6 @@
         };
 
         btns[Drupal.t('Cancel')] = function () {
-          jQuery(this).dialog("close");
           dialogClose();
         };
 
