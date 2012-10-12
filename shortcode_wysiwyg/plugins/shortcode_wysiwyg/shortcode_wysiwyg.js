@@ -79,12 +79,12 @@
           shortcode = '[' + shortcode + (options.length ? ' ' + options.join(' ') : '') + ']' + data.content + '[/' + shortcode + ']';
 
           Drupal.wysiwyg.plugins.shortcode_wysiwyg.insertIntoEditor(shortcode, editor_id);
-          jQuery(this).dialog("close");
-
+          dialogClose();
         };
 
         btns[Drupal.t('Cancel')] = function () {
           jQuery(this).dialog("close");
+          dialogClose();
         };
 
         dialogdiv.dialog({
@@ -102,6 +102,7 @@
           close:dialogClose
         });
         dialogdiv.dialog("open");
+        // TODO: add context there
         Drupal.attachBehaviors();
       });
     },
