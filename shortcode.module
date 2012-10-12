@@ -16,7 +16,7 @@ function shortcode_list_all($reset = FALSE) {
   $shortcodes = &drupal_static(__FUNCTION__);
   if (!isset($shortcodes) || $reset) {
     $shortcodes = array();
-    $shortcodes += module_invoke_all('shortcode_info');
+    $shortcodes = module_invoke_all('shortcode_info');
   }
 
   return $shortcodes;
