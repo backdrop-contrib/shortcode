@@ -350,6 +350,7 @@ function shortcode_basic_tags_shortcode_item($attrs, $text) {
       $type = 'span';
       break;
 
+    case 'd':
     default:
       $type = 'div';
       break;
