@@ -311,13 +311,14 @@ function shortcode_basic_tags_shortcode_img($attrs, $text) {
   $attrs = shortcode_attrs(array(
       'class' => 'img',
       'alt' => '',
+      'src' => 'themes/bartik/logo.png', // default logo from bartik
     ),
     $attrs
   );
 
   $class = shortcode_add_class($attrs['class'], 'img');
 
-  return theme('shortcode_img', array('src' => $text, 'alt' => $attrs['alt'], 'class' => $class));
+  return theme('shortcode_img', array('src' => $attrs['src'], 'alt' => $attrs['alt'], 'class' => $class));
 }
 
 function theme_shortcode_img($vars) {
@@ -326,7 +327,7 @@ function theme_shortcode_img($vars) {
 
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
   $output = array();
-  $output[] = '<p><strong>' . t('[img (class="additional class"|alt="alt text")]image url[/img]') . '</strong> ';
+  $output[] = '<p><strong>' . t('[img scr="image.jpg" (class="additional class"|alt="alt text")/]') . '</strong> ';
   $output[] = t('Inserts an image based on the given image url.') . '</p>';
 
   return implode(' ', $output);
