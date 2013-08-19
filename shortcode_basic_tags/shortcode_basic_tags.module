@@ -400,12 +400,13 @@ function shortcode_basic_tags_shortcode_clear($attrs, $text) {
       $type = 'span';
       break;
 
+    case 'd':
     default:
       $type = 'div';
       break;
   }
 
-  return theme('shortcode_clear', array('text' => $text, 'id' => $attrs['id'], 'class' => $class, 'type' => $attrs['type'], 'style' => $attrs['style']));
+  return theme('shortcode_clear', array('text' => $text, 'id' => $attrs['id'], 'class' => $class, 'type' => $type, 'style' => $attrs['style']));
 }
 
 function shortcode_basic_tags_shortcode_clear_tip($format, $long) {
