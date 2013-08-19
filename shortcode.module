@@ -164,7 +164,7 @@ function _shortcode_process($text, $filter) {
   $shortcodes_enabled = array();
 
   foreach ($filter->settings as $name => $value) { // run through all shortcodes
-    if ($value && $shortcodes[$name]['process callback']) {
+    if ($value && !empty($shortcodes[$name]['process callback'])) {
       $shortcodes_enabled[$name] = array(
         'function' => $shortcodes[$name]['process callback'],
       );
