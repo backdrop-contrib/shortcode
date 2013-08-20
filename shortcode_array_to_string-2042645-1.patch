@@ -1,0 +1,13 @@
+diff --git a/shortcode.module b/shortcode.module
+index c881904..3cbf9cb 100644
+--- a/shortcode.module
++++ b/shortcode.module
+@@ -106,7 +106,7 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
+     $settings[$key] = array(
+       '#type' => 'checkbox',
+       '#title' => t('Enable %name shortcode', array('%name' => $shortcode['title'])),
+-      '#default_value' => array(),
++      '#default_value' => NULL,
+       '#description' => isset($shortcode['description']) ? $shortcode['description'] : t('Enable or disable this shortcode in this input format'),
+     );
+ 
