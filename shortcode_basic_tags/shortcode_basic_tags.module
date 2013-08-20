@@ -516,7 +516,7 @@ function shortcode_basic_tags_shortcode_random($attrs, $text) {
 
 function shortcode_basic_tags_shortcode_random_tip($format, $long) {
   $output = array();
-  $output[] = '<p><strong>[random (length="8")</strong>';
+  $output[] = '<p><strong>[random (length="8") /]</strong>';
   if ($long) {
     $output[] = t('Inserts a random text with the given length.') . '</p>';
     $output[] = '<p>&nbsp</p>';
