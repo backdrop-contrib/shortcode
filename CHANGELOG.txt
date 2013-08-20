@@ -1,6 +1,9 @@
-Shortcode 7.x-2.x, xxxx-xx-xx                                                                                                               
------------------------------- 
-
+Shortcode 7.x-2.x, xxxx-xx-xx
+------------------------------
+Shortcode 7.x-2.x, 7.x-2.0, 2013-08-20
+  #1879712 by BarisW: Implement hook_shortcode_info()
+  #2042645 by mrupal: fix in default value handling
+  Various fixes and additional checkings
 
 Shortcode 7.x-2.x, 7.x-2.0-alpha4, 2012-10-12
 
@@ -21,18 +24,18 @@ Changes since 7.x-2.0-alpha1:
   Initial version of the video macro shortcode module.
   Allowed escaping codes.
   Removed debug code, small code clean ups.
-                                                                                                               
------------------------------- 
 
-Shortcode 7.x-2.x, 2012-03-10                                                                                                               
------------------------------- 
+------------------------------
+
+Shortcode 7.x-2.x, 2012-03-10
+------------------------------
 
 by balagan: Corrected the module english words.
 by Denes.Szabo: Added the initial version of the video macro shortcode module.
 
 
-Shortcode 7.x-2.x, 2012-03-10                                                                                                               
------------------------------- 
+Shortcode 7.x-2.x, 2012-03-10
+------------------------------
 
 by Denes.Szabo: Allowed to escape codes.
 by Denes.Szabo: Updated the code tips, now all translateable.
