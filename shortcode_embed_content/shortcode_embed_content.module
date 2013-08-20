@@ -4,9 +4,9 @@
  */
 /**
  * Implements hook_shortcode_info()
- * 
+ *
  * @return array - The shortcode definition array
- * 
+ *
  */
 function shortcode_embed_content_shortcode_info() {
   $shortcodes['embed_content'] = array(
@@ -36,25 +36,27 @@ function shortcode_embed_content_shortcode_info() {
  * TODO: implement view_mode - other than teaser or full!
  */
 function shortcode_embed_content_shortcode_node($attrs, $text) {
-  extract( shortcode_attrs( array(
+  $attrs = shortcode_attrs( array(
       'nid'    => 0,
       'class'  => '',
-      'view_mode' => 'full',
+      'view_mode' => 'teaser', // TODO: actually the full mode is does not work
       'show_title' => FALSE,
       'show_submitted' => FALSE,
       'show_meta' => FALSE,
       'show_terms' => FALSE,
       'show_links' => FALSE,
-      ), $attrs ));
+      ),
+    $attrs
+  );
 
 
-  if (is_numeric($nid) && $nid) {
-    $node = node_load($nid);
+  if (!empty($attrs['nid'])) {
+    $node = node_load($attrs['nid']);
     // add embedded flag to the node
-    $node->shortcode_embedded = TRUE;
-    if (!$node->status || !node_access('view', $node)) {
+    if (empty($node) || !$node->status || !node_access('view', $node)) {
       return '';
     }
+    $node->shortcode_embedded = TRUE;
   }
   else {
     return '';
@@ -62,18 +64,19 @@ function shortcode_embed_content_shortcode_node($attrs, $text) {
 
   $params = new stdClass();
   $params->embedded = TRUE;
-  // fixme: what view modes supported
-  $params->view_mode = $view_mode;
-  $params->show_title = shortcode_bool($show_title);
-  $params->show_meta = shortcode_bool($show_meta);
-  $params->show_submitted = shortcode_bool($show_submitted);
-  $params->show_terms = shortcode_bool($show_terms);
-  $params->show_links = shortcode_bool($show_links);
+  $params->view_mode = $params->original_view_mode = $attrs['view_mode'];
+  $params->show_title = shortcode_bool($attrs['show_title']);
+  $params->show_meta = shortcode_bool($attrs['show_meta']);
+  $params->show_submitted = shortcode_bool($attrs['show_submitted']);
+  $params->show_terms = shortcode_bool($attrs['show_terms']);
+  $params->show_links = shortcode_bool($attrs['show_links']);
   // insert the original attributes to the params
   $params->attrs = $attrs;
   $node->shortcode = $params;
-  //$content = node_view($node, $params->view_mode);
-  $content = node_view($node, 'teaser');
+  if ('full' == $attrs['view_mode']) {
+    $params->view_mode = 'teaser';
+  }
+  $content = node_view($node, $params->view_mode);
   return render($content);
 } // shortcode_embed_content_shortcode_node()
 
