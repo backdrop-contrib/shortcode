@@ -17,6 +17,9 @@ function shortcode_list_all($reset = FALSE) {
   if (!isset($shortcodes) || $reset) {
     $shortcodes = array();
     $shortcodes = module_invoke_all('shortcode_info');
+
+    // Allow alteration of the shortcodes.
+    drupal_alter('shortcode_info', $shortcodes);
   }
 
   return $shortcodes;

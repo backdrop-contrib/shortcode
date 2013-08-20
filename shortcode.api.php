@@ -44,3 +44,35 @@ function hook_shortcode_info() {
 
   return $shortcodes;
 }
+
+/**
+ * hook_shortcode_info_alter()
+ * Alter existing shortcodes
+ *
+ * @param $shortcodes
+ *    An associative array of shortcodes
+ *
+ * @return
+ *     An associative array of shortcodes, whose keys are internal shortcode names,
+ *     which should be unique..
+ *     Each value is an associative array describing the shortcode, with the
+ *     following elements (all are optional except as noted):
+ *   - title: (required) An administrative summary of what the shortcode does.
+ *   - description: Additional administrative information about the shortcode's
+ *     behavior, if needed for clarification.
+ *   - settings callback: The name of a function that returns configuration form
+ *     elements for the shortcode.
+ *   - default settings: An associative array containing default settings for
+ *     the shortcode, to be applied when the shortcode has not been configured yet.
+ *   - process callback: (required) The name the function that performs the
+ *     actual shortcodeing.
+ *   - tips callback: The name of a function that returns end-user-facing shortcode
+ *     usage guidelines for the shortcode.
+ */
+/**
+ * @param $shortcodes
+ */
+function hook_shortcode_info_alter(&$shortcodes) {
+  // Example to change the process callback for quotes.
+  $shortcodes['quote']['process callback'] = 'MYMODULE_shortcode_quote';
+}
