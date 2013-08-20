@@ -1,0 +1,48 @@
+diff --git a/docroot/sites/all/modules/contrib/shortcode/shortcode.api.php b/docroot/sites/all/modules/contrib/shortcode/shortcode.api.php
+index 5a906ff..741a409 100644
+--- a/docroot/sites/all/modules/contrib/shortcode/shortcode.api.php
++++ b/docroot/sites/all/modules/contrib/shortcode/shortcode.api.php
+@@ -44,3 +44,29 @@ function hook_shortcode_info() {
+ 
+   return $shortcodes;
+ }
++
++/**
++ * hook_shortcode_info_alter()
++ * Alter existing shortcodes
++ *
++ * @return
++ *     An associative array of shortcodes, whose keys are internal shortcode names,
++ *     which should be unique..
++ *     Each value is an associative array describing the shortcode, with the
++ *     following elements (all are optional except as noted):
++ *   - title: (required) An administrative summary of what the shortcode does.
++ *   - description: Additional administrative information about the shortcode's
++ *     behavior, if needed for clarification.
++ *   - settings callback: The name of a function that returns configuration form
++ *     elements for the shortcode. TODO
++ *   - default settings: An associative array containing default settings for
++ *     the shortcode, to be applied when the shortcode has not been configured yet.
++ *   - process callback: (required) The name the function that performs the
++ *     actual shortcodeing.
++ *   - tips callback: The name of a function that returns end-user-facing shortcode
++ *     usage guidelines for the shortcode.
++ */
++function hook_shortcode_info_alter(&$shortcodes) {
++  // Example to change the process callback for quotes.
++  $shortcodes['quote']['process callback'] = 'MYMODULE_shortcode_quote';
++}
+diff --git a/docroot/sites/all/modules/contrib/shortcode/shortcode.module b/docroot/sites/all/modules/contrib/shortcode/shortcode.module
+index c881904..ada8bf1 100644
+--- a/docroot/sites/all/modules/contrib/shortcode/shortcode.module
++++ b/docroot/sites/all/modules/contrib/shortcode/shortcode.module
+@@ -17,6 +17,9 @@ function shortcode_list_all($reset = FALSE) {
+   if (!isset($shortcodes) || $reset) {
+     $shortcodes = array();
+     $shortcodes = module_invoke_all('shortcode_info');
++
++    // Allow alteration of the shortcodes.
++    drupal_alter('shortcode_info', $shortcodes);
+   }
+ 
+   return $shortcodes;
