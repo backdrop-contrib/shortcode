@@ -55,6 +55,7 @@ function shortcode_basic_tags_shortcode_info() {
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_clear_tip',
   );
+
   $shortcodes['link'] = array(
     'title' => t('Link'),
     'description' => t('Makes an aliased link to the given path.'),
@@ -62,6 +63,7 @@ function shortcode_basic_tags_shortcode_info() {
     //'settings callback' => '_shortcode_settings_form', TODO
     'tips callback' => 'shortcode_basic_tags_shortcode_link_tip',
   );
+
   $shortcodes['random'] = array(
     'title' => t('Random text'),
     'description' => t('Generating random text.'),
@@ -434,48 +436,116 @@ function theme_shortcode_clear($vars) {
 }
 
 /*
- * Create aliased link
+ * Provides an aliased link.
  *
- * param $text = the linked text
- * attr[path] = the path we need aliaded
+ * param string $text
+ *   (optional) The linked text.
+ *
+ * param attributes array
+ *   (optional)
+ *   - title = the title of the link. Can be disabled by <none>. If empty the
+ *             text will be used.
+ *   - class = CSS classes separated by spaces
+ *   - style = CSS styles
+ *   - id – DOM id of the link.
+ *  URL parameters:
+ *   - path = the path of the link. Will be formatted by the url(). Default is
+ *     the <front> link.
+ *   - html – Enable HTML of the link text.
+ *   - absolute — The link can be absolute or relative (default).
+ *   - fragment - The url fragment.
+ *   - alias — Flag for aliased URL (TRUE).
  *
  */
-function shortcode_basic_tags_shortcode_link($attrs, $text) {
-  $attrs = shortcode_attrs(array(
+function shortcode_basic_tags_shortcode_link($attributes, $text) {
+  // Used attributes by this macro.
+  $attributes = shortcode_attrs(array(
       'path' => '<front>',
       'title' => '',
-      // ...etc
-    ), $attrs
+      'class' => '',
+      'style' => '',
+      'id' => '',
+      'html' => FALSE,
+      'absolute' => FALSE,
+      'fragment' => '',
+      'alias' => TRUE,
+    ), $attributes
   );
 
-  $path = url($attrs['path']);
+  $options = array(
+    'attributes' => array(),
+  );
+
+  $options['html'] = shortcode_bool($attributes['html']);
+  $options['absolute'] = shortcode_bool($attributes['absolute']);
+  $options['alias'] = shortcode_bool($attributes['alias']);
+
+  if ($attributes['fragment']) {
+    $options['fragment'] = check_plain($attributes['fragment']);
+  }
+
   if ($text) {
-    $class = empty($class) ? '' : ' class="' . $class . '"';
-    $style = empty($style) ? '' : ' style="' . $style . '"';
-    $id = empty($id) ? '' : ' id="' . $id . '"';
-    if ($attrs['title'] == '<none>') {
-      $title = '';
+    if ($attributes['class']) {
+      $options['attributes']['class'] = check_plain($attributes['class']);
+    }
+
+    if ($attributes['style']) {
+      $options['attributes']['style'] = check_plain($attributes['style']);
+    }
+
+    if ($attributes['id']) {
+      $options['attributes']['id'] = check_plain($attributes['id']);
+    }
+
+    if ($attributes['title'] == '<none>') {
+      unset($options['attributes']['title']);
     }
     else {
-      $title = empty($attrs['title']) ? check_plain($text) : check_plain($attrs['title']);
-      $title = ' title="' . $title . '"';
+      $title = empty($attributes['title']) ? $text : $attributes['title'];
+      $options['attributes']['title'] = $title;
     }
-    return '<a href="' . $path . '"' . $id . $class . $style . $title . '>' . $text . '</a>';
+
+    return l($text, $attributes['path'], $options);
   }
+
+  // Return only the URL.
+  $path = check_plain(url($attributes['path'], $options));
   return $path;
 }
 
 function shortcode_basic_tags_shortcode_link_tip($format, $long) {
   $output = array();
-  $output[] = '<p><strong>' . t('[link path="the drupal path" (title="link title"|class="additional class"|id=item id|style=css style rules)]text[/link]') . '</strong>';
+  $output[] = '<p><strong>' . t('[link path="the Drupal path"]link text[/link]') . '</strong>';
+  $output[] = t('Inserts aliased Drupal path around the link text.');
   if ($long) {
-    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you get back the url only.') . '</p>';
-    $output[] = '<p>' . t('Additional class names can be added by the <em>class</em> parameter. The id parameter gives the html an unique css id. In the <em>style</em> parameter you can use your own css definition.') . '</p>';
+    $output[] = '<p>';
+    $output[] = t('If you omit the text and the closing [/link] tag, you get back the URL only.') . '</p>';
+    $output[] = t('Additional parameters for the link:
+     <ul>
+       <li><em>title</em> for link title. Default value is the link text. Use &lt;none&gt; to disable.</li>
+       <li><em>class</em> for CSS classes.</li>
+       <li><em>style</em> for additional CSS rules.</li>
+       <li><em>id</em> for unique HTML id. (No need to use # sign.)</li>
+     </ul>
+     Parameters for the URL:
+     <ul>
+       <li><em>html</em> If true, enables HTML in the text. Default is false.</li>
+       <li><em>absolute</em> Provides absolute URL if true. Default is false.</li>
+       <li><em>fragment</em> The fragment of the URL.</li>
+       <li><em>alias</em> If false, it disables aliased URL. Default is true.</li>
+     </ul>
+
+    Samples:
+    <ul>
+      <li>Simple link with title: [link path="node/5" title="My little title"]link text[/link]</li>
+      <li>Link with class, style, no title: [link path="node/5" title="&lt;none&gt;" class="button my-button" style="text-transform: uppercase;" id="my-button"]button text[/link]</li>
+      <li>Absolute path with fragment: [link path="node/6" absolute="true" fragment="jump-to-content" /]</li>
+    </ul>
+    ');
+    $output[] = '</p>';
     $output[] = '<p>&nbsp</p>';
   }
-  else {
-    $output[] = t('Inserts an aliased drupal path around the text. You can omit the text and the closing [/link], you get back the url only.') . '</p>';
-  }
+
 
   return implode(' ', $output);
 }
