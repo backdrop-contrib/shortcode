@@ -8,7 +8,7 @@ function shortcode_video_shortcode_info() {
     'title' => t('Video macro'),
     'description' => t('Inserts embedded video code.'),
     'process callback' => 'shortcode_video_macro_process',
-    //'attributes callback' => "shortcode_basic_tags_quote_attributes",
+    //'attributes callback' => "shortcode_video_shortcode_attributes",
     'tips callback' => 'shortcode_video_tip',
   );
   return $shortcodes;
@@ -20,21 +20,32 @@ function shortcode_video_shortcode_info() {
 function shortcode_video_theme() {
   return array(
     'shortcode_video_embed_error' => array(
-      'variables' => array('video_url' => '', 'class' => 'video-embedding-error'),
+      'variables' => array(
+        'video_url' => '',
+        'class' => 'video-embedding-error',
+      ),
     ),
     'shortcode_video_embed_no_provider' => array(
-      'variables' => array('video_url' => '', 'class' => 'video-embedding-no-provider'),
+      'variables' => array(
+        'video_url' => '',
+        'class' => 'video-embedding-no-provider',
+      ),
     ),
     'shortcode_video_embed_youtube' => array(
-      'variables' => array('video_url' => '', 'attributes' => array()),
+      'variables' => array(
+        'video_url' => '',
+        'attributes' => array(),
+      ),
     ),
   );
 }
 
 /*
- * Youtube embed code
+ * Provides Youtube video embedding Shortcode macro.
  *
- * <iframe width="420" height="315" src="http://www.youtube.com/embed/EJu8ihVdygY?rel=0" frameborder="0" allowfullscreen></iframe>
+ * <iframe width="420" height="315"
+ * src="http://www.youtube.com/embed/EJu8ihVdygY?rel=0"
+ * frameborder="0" allowfullscreen></iframe>
  */
 function shortcode_video_macro_process($attrs, $text) {
   $attrs = shortcode_attrs(array(
@@ -45,11 +56,11 @@ function shortcode_video_macro_process($attrs, $text) {
     $attrs
   );
 
-  // which provider given
+  // Get provider.
   $m = array();
   preg_match('!^.*\://(.*?\.)?([^\.]*?)\.([^\.]*?)\/(.*?)$!', $text, $m);
   if (empty($m[1])) {
-    // something wrong with the text
+    // Something wrong with the text.
     return theme('shortcode_video_embed_error', array('video_url' => $text));
   }
 
@@ -63,9 +74,13 @@ function shortcode_video_macro_process($attrs, $text) {
         $output = theme('shortcode_video_embed_youtube', $params);
       }
       break;
+
     default:
-      $output = theme('shortcode_video_embed_no_provider', array('video_url' => $text));
+      $output = theme('shortcode_video_embed_no_provider',
+        array('video_url' => $text,)
+      );
       break;
+
   }
 
   return $output;
@@ -78,7 +93,7 @@ function shortcode_video_tip($format, $long) {
     $output[] = t('Embeds the video into the text.') . '</p>';
   }
   else {
-    $output[] = t('Embeds the video into the content text. With the <em>width</em> and <em>height</em> parameter you can specify the video size.') . '</p>';
+    $output[] = t('Embeds video into the content text. With the <em>width</em> and <em>height</em> parameter you can specify the video size.') . '</p>';
     $output[] = '<p>' . t('For YouTube videos you can specify the width with 420, 480, 640, 960 as the default videos sizes, then the height of the video will be added according to the default embed sizes. The default video size is 480x360px.') . '</p>';
   }
 
@@ -103,8 +118,8 @@ function shortcode_video_tip($format, $long) {
  */
 function _shortcode_video_get_youtube_videoid($m) {
   $params = array();
-  // $m[4] contains the video url from the end of the provider url to the end of the given text
-  // maybe contains html (</iframe>)
+  // $m[4] contains the video url from the end of the provider url to the end of
+  // the given text. Maybe it contains HTML (</iframe> tag).
   $type = substr($m[4], 0, 5);
   if ('watch' == $type) {
     $mm = array();
@@ -135,20 +150,30 @@ function _shortcode_video_get_youtube_videoid($m) {
  * Theme functions
  */
 
+/**
+ * Provides video embed error theme function.
+ */
 function theme_shortcode_video_embed_error($variables) {
   return '<span class="' . $variables['class'] .'">' . check_plain($variables['video_url']) . '</span>';
 }
 
+/**
+ * Provides video no provider theme function.
+ */
 function theme_shortcode_video_embed_no_provider($variables) {
   return '<span class="' . $variables['class'] .'">' . check_plain($variables['video_url']) . '</span>';
 }
 
+/**
+ * Provides YouTube video embed theme function.
+ */
 function theme_shortcode_video_embed_youtube($variables) {
   $attrs = $variables['attributes'];
 
   $height = empty($attrs['height']) ? 0 : intval($attrs['height']);
   $width = empty($attrs['width']) ? 0 : intval($attrs['width']);
 
+  // Set defaults.
   if (empty($width) && empty($height)) {
     $width = 480;
     $height = 360;
@@ -158,18 +183,23 @@ function theme_shortcode_video_embed_youtube($variables) {
       case 450:
         $height = 315;
         break;
+
       case 480:
         $height = 360;
         break;
+
       case 640:
         $height = 480;
         break;
+
       case 960:
         $height = 720;
         break;
+
       default:
         $height = intval($width * 0.75);
         break;
+
     }
   }
   else {
