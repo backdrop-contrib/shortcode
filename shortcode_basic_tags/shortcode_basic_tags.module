@@ -526,7 +526,7 @@ function theme_shortcode_img($vars) {
  */
 function shortcode_basic_tags_shortcode_img_tip($format, $long) {
   $output = array();
-  $output[] = '<p><strong>' . t('[img scr="image.jpg" (class="additional class"|alt="alt text")/]') . '</strong> ';
+  $output[] = '<p><strong>' . t('[img src="image.jpg" (class="additional class"|alt="alt text")/]') . '</strong> ';
   $output[] = t('Inserts an image based on the given image url.') . '</p>';
 
   return implode(' ', $output);
