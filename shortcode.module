@@ -47,7 +47,7 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
 
   // Run through all Shortcodes defined.
   foreach ($filters['shortcode']->settings as $name => $enabled) {
-    if ($enabled) {
+    if ($enabled && !empty($shortcodes[$name])) {
       $shortcodes_enabled[$format->format][$name] = $shortcodes[$name];
     }
   }
