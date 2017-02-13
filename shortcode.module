@@ -76,7 +76,11 @@ function shortcode_filter_info() {
 }
 
 /**
- * Provides filter tips callback.
+ * Implements callback_filter_tips().
+ *
+ * Provides help for the ShortCode filter.
+ *
+ * @see filter_filter_info()
  */
 function _shortcode_filter_tips($filter, $format, $long = FALSE) {
   $shortcodes = shortcode_list_all_enabled($format);
