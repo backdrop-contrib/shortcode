@@ -61,15 +61,15 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
  */
 function shortcode_filter_info() {
   $filters['shortcode'] = array(
-    'title' => t('Shortcodes'),
-    'description' => t('Provides WP like shortcodes to this text format.'),
+    'title' => t('ShortCodes'),
+    'description' => t('Provides WP like ShortCodes to this text format.'),
     'process callback' => '_shortcode_process',
     'settings callback' => '_shortcode_settings_form',
     'tips callback' => '_shortcode_filter_tips',
   );
   $filters['shortcode_text_corrector'] = array(
     'title' => t('Shortcodes - html corrector'),
-    'description' => t('Trying to correct the html around shortcodes. Enable only if you using wysiwyg editor.'),
+    'description' => t('Trying to correct the HTML around ShortCodes. Enable only if you using WYSIWYG editor.'),
     'process callback' => '_shortcode_postprocess_text',
   );
 
@@ -103,7 +103,7 @@ function _shortcode_filter_tips($filter, $format, $long = FALSE) {
     if ($tips) {
       $out = theme('item_list',
         array(
-          'title' => t('Shortcodes usage'),
+          'title' => t('ShortCodes usage'),
           'items' => $tips,
           'type' => 'ol',
         )
@@ -301,7 +301,7 @@ function _shortcode_process($text, $filter) {
 }
 
 /**
- * Provides Html corrector for wysiwyg editors.
+ * Provides html corrector for WYSIWYG editors.
  *
  * Correcting p elements around the divs. There are no <div> element is allowed
  * in <p> so remove them.
