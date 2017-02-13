@@ -83,27 +83,38 @@ function shortcode_filter_info() {
  * @see filter_filter_info()
  */
 function _shortcode_filter_tips($filter, $format, $long = FALSE) {
+  $out = NULL;
   $shortcodes = shortcode_list_all_enabled($format);
-  if (empty($shortcodes)) {
-    return t('No shortcodes are enabled for this input format.');
-  }
-  $tips = array();
-  foreach ($filter->settings as $name => $enabled) {
-    if ($enabled && !empty($shortcodes[$name]['tips callback']) && is_string($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
-      $tips[] = call_user_func_array($shortcodes[$name]['tips callback'], array($format, $long));
+  if (!empty($shortcodes)) {
+    $tips = array();
+    foreach ($filter->settings as $name => $enabled) {
+      if ($enabled && !empty($shortcodes[$name]['tips callback']) && is_string($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
+        $tip = call_user_func_array($shortcodes[$name]['tips callback'], array(
+          $format,
+          $long
+        ));
+        $tip = trim($tip);
+        if ($tip) {
+          $tips[] = $tip;
+        }
+      }
+    }
+    if ($tips) {
+      $out = theme('item_list',
+        array(
+          'title' => t('Shortcodes usage'),
+          'items' => $tips,
+          'type' => 'ol',
+        )
+      );
     }
   }
-  return theme('item_list',
-    array(
-      'title' => t('Shortcodes usage'),
-      'items' => $tips,
-      'type' => 'ol',
-    )
-  );
+
+  return $out;
 }
 
 /**
- * Provides settings form form Shortcodes enable.
+ * Provides settings form form ShortCodes enable.
  */
 function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaults) {
   $settings = array();
