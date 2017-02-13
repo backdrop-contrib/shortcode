@@ -140,58 +140,38 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
 }
 
 /**
- * Implements small tags cache.
+ * Get enabled shortcodes for a given filter.
+ *
+ * @param object $filter
+ * @return array
  */
-function _shortcode_tags($tags = NULL) {
-  $shortcodes = &drupal_static(__FUNCTION__, array());
-  if ($tags) {
-    $shortcodes = $tags;
-    return TRUE;
+function _shortcode_get_shortcodes($filter) {
+  $shortcodes_enabled = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($shortcodes_enabled[$filter->format])) {
+    $shortcodes_enabled[$filter->format] = array();
+    $shortcodes = shortcode_list_all();
+    foreach ($filter->settings as $name => $value) {
+      if ($value && !empty($shortcodes[$name]['process callback'])) {
+        $shortcodes_enabled[$filter->format][$name] = array(
+          'function' => $shortcodes[$name]['process callback'],
+        );
+      }
+    }
   }
 
-  return $shortcodes;
-}
-
-/**
- * Checking the given tag is valid Shortcode macro or not.
- *
- * @param string $tag
- *   The tag name.
- *
- * @return bool
- *   Returns TRUE if the given $tag is valid macro.
- */
-function shortcode_is_tag($tag) {
-  $tags = _shortcode_tags();
-
-  if (isset($tags[$tag])) {
-    return TRUE;
-  }
-
-  return FALSE;
+  return $shortcodes_enabled[$filter->format];
 }
 
 /**
  * Processes the Shortcodes according to the text and the text format.
  */
 function _shortcode_process($text, $filter) {
-  $shortcodes = shortcode_list_all();
-  $shortcodes_enabled = array();
-
-  foreach ($filter->settings as $name => $value) {
-    if ($value && !empty($shortcodes[$name]['process callback'])) {
-      $shortcodes_enabled[$name] = array(
-        'function' => $shortcodes[$name]['process callback'],
-      );
-    }
-  }
+  $shortcodes_enabled = _shortcode_get_shortcodes($filter);
 
   if (empty($shortcodes_enabled)) {
     return $text;
   }
-
-  // Save the ShortCodes in the local cache.
-  _shortcode_tags($shortcodes_enabled);
 
   // Processing recursively, now embedding tags within other tags is supported!
   $chunks = preg_split('!(\[{1,2}.*?\]{1,2})!', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -227,7 +207,7 @@ function _shortcode_process($text, $filter) {
       $tag = array_shift($ts);
       $tag = trim($tag, '/');
 
-      if (!shortcode_is_tag($tag)) {
+      if (!isset($shortcodes_enabled[$tag])) {
         // The current tag is not enabled.
         array_unshift($heap_index, '_string_');
         array_unshift($heap, $original_text);
@@ -252,7 +232,7 @@ function _shortcode_process($text, $filter) {
           '',
         );
         array_unshift($heap_index, '_string_');
-        array_unshift($heap, _shortcode_process_tag($m));
+        array_unshift($heap, _shortcode_process_tag($m, $filter));
       }
       elseif ($c[0] == '/') {
         // Indicate a closing tag, so we process the heap.
@@ -277,7 +257,7 @@ function _shortcode_process($text, $filter) {
               implode('', $process_heap),
               '',
             );
-            $str = _shortcode_process_tag($m);
+            $str = _shortcode_process_tag($m, $filter);
             array_unshift($heap_index, '_string_');
             array_unshift($heap, $str);
             $found = TRUE;
@@ -346,9 +326,9 @@ function _shortcode_postprocess_text($text, $filter) {
  * @return mixed
  *   False on failure.
  */
-function _shortcode_process_tag($m) {
+function _shortcode_process_tag($m, $filter) {
   // Get tags from the static cache.
-  $shortcodes = _shortcode_tags();
+  $shortcodes = _shortcode_get_shortcodes($filter);
 
   $tag = $m[2];
 
