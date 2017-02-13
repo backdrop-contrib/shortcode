@@ -1,14 +1,15 @@
 <?php
+
 /**
  * @file
- * Provides ShortCodes filter framework and API (like WP Shortcodes)
+ * Provides ShortCodes filter framework and API (like WP ShortCodes)
  */
 
 /**
- * Builds a list of all Shortcodes (for filter).
+ * Builds a list of all ShortCodes (for filter).
  *
- * Calls the Shortcode_info hook with the list parameter on all module. Returns
- * the all defined and altered Shortcode definitions.
+ * Calls the ShortCode_info hook with the list parameter on all module. Returns
+ * the all defined and altered ShortCode definitions.
  */
 function shortcode_list_all($reset = FALSE) {
   $shortcodes = &drupal_static(__FUNCTION__);
@@ -24,7 +25,7 @@ function shortcode_list_all($reset = FALSE) {
 }
 
 /**
- * Returns only enabled Shortcodes for a specified input format.
+ * Returns only enabled ShortCodes for a specified input format.
  */
 function shortcode_list_all_enabled($format, $reset = FALSE) {
   if (is_string($format)) {
@@ -140,10 +141,13 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
 }
 
 /**
- * Get enabled shortcodes for a given filter.
+ * Get enabled ShortCodes for a given filter.
  *
  * @param object $filter
+ *   The filters object.
+ *
  * @return array
+ *   The enabled ShortCodes array for the input format.
  */
 function _shortcode_get_shortcodes($filter) {
   $shortcodes_enabled = &drupal_static(__FUNCTION__, array());
@@ -164,7 +168,7 @@ function _shortcode_get_shortcodes($filter) {
 }
 
 /**
- * Processes the Shortcodes according to the text and the text format.
+ * Processes the ShortCodes according to the text and the text format.
  */
 function _shortcode_process($text, $filter) {
   $shortcodes_enabled = _shortcode_get_shortcodes($filter);
@@ -217,10 +221,10 @@ function _shortcode_process($text, $filter) {
         /*
          * The exploded array elements meaning:
          * 0 - the full tag text?
-         * 1/5 - An extra [] to allow for escaping Shortcodes with double [[]].
-         * 2 - The Shortcode name.
-         * 3 - The Shortcode argument list.
-         * 4 - The content of a Shortcode when it wraps some content.
+         * 1/5 - An extra [] to allow for escaping ShortCodes with double [[]].
+         * 2 - The ShortCode name.
+         * 3 - The ShortCode argument list.
+         * 4 - The content of a ShortCode when it wraps some content.
          */
 
         $m = array(
@@ -283,7 +287,7 @@ function _shortcode_process($text, $filter) {
         array_unshift($heap_index, $tag);
         array_unshift($heap, implode(' ', $ts));
       }
-      // If escaped or not a Shortcode.
+      // If escaped or not a ShortCode.
     }
     else {
       // Maybe not found a pair?
@@ -322,11 +326,13 @@ function _shortcode_postprocess_text($text, $filter) {
  *
  * @param array $m
  *   Regular expression match array.
+ * @param object $filter
+ *   The input format filter object.
  *
  * @return mixed
  *   False on failure.
  */
-function _shortcode_process_tag($m, $filter) {
+function _shortcode_process_tag(array $m, $filter) {
   // Get tags from the static cache.
   $shortcodes = _shortcode_get_shortcodes($filter);
 
@@ -368,14 +374,14 @@ function _shortcode_process_tag($m, $filter) {
 }
 
 /**
- * Retrieve all attributes from the Shortcodes tag.
+ * Retrieve all attributes from the ShortCodes tag.
  *
  * The attributes list has the attribute name as the key and the value of the
  * attribute as the value in the key/value pair. This allows for easier
  * retrieval of the attributes, since all attributes have to be known.
  *
  * @param string $text
- *   The Shortcode tag attribute line.
+ *   The ShortCode tag attribute line.
  *
  * @return array
  *   List of attributes and their value.
@@ -430,7 +436,7 @@ function _shortcode_parse_attrs($text) {
  * @return string
  *   The ShortCode search regular expression
  */
-function _shortcode_get_shortcode_regex($names) {
+function _shortcode_get_shortcode_regex(array $names) {
   $tagregexp = implode('|', array_map('preg_quote', $names));
 
   // WARNING! Do not change this regex without changing do_shortcode_tag()
@@ -456,7 +462,7 @@ function _shortcode_get_shortcode_regex($names) {
  * @return array
  *   Combined and filtered attribute list.
  */
-function shortcode_attrs($pairs, $attrs) {
+function shortcode_attrs(array $pairs, array $attrs) {
   $attrs = (array) $attrs;
   $out = array();
   foreach ($pairs as $name => $default) {
