@@ -411,7 +411,7 @@ function _shortcode_parse_attrs($text) {
     }
   }
   else {
-    $attrs = ltrim($text);
+    $attrs[] = ltrim($text);
   }
   return $attrs;
 }
