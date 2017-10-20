@@ -89,7 +89,7 @@ function _shortcode_filter_tips($filter, $format, $long = FALSE) {
   if (!empty($shortcodes)) {
     $tips = array();
     foreach ($filter->settings as $name => $enabled) {
-      if ($enabled && !empty($shortcodes[$name]['tips callback']) && is_string($shortcodes[$name]['tips callback']) && function_exists($shortcodes[$name]['tips callback'])) {
+      if ($enabled && !empty($shortcodes[$name]['tips callback'])) {
         $tip = call_user_func_array($shortcodes[$name]['tips callback'], array(
           $format,
           $long,
