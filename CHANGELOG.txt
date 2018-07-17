@@ -1,3 +1,8 @@
+Shortcode 1.x-2.x, 2018-07-17
+------------------------------
+  Port for Backdrop by kevincrafts
+
+
 Shortcode 7.x-2.x, xxxx-xx-xx
 ------------------------------
 Shortcode 7.x-2.x, 2014-04-10
@@ -49,4 +54,3 @@ by Denes.szabo: Fixed multi text format handling in one content.
 #1469132 by Nick Cash: Removed theme alter.
 by Denes.szabo: Added documentation to the functions.
 by Denes.szabo: Renamed the shortcode_embed_content module.
-
