@@ -1,5 +1,6 @@
+type = module
 name = Shortcode
 description = Provides shortcodes filter framework and API (like WP shortcodes)
-package = Shortcode
-core = 7.x
-dependencies[] = filter
+package = Core
+version = 1.x
+backdrop = 1.x
