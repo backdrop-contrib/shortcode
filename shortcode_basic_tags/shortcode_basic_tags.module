@@ -895,8 +895,8 @@ function shortcode_basic_tags_shortcode_link($attributes, $text) {
  */
 function shortcode_basic_tags_shortcode_link_tip($format, $long) {
   $output = array();
-  $output[] = '<p><strong>' . t('[link path="the Drupal path"]link text[/link]') . '</strong>';
-  $output[] = t('Inserts aliased Drupal path around the link text.');
+  $output[] = '<p><strong>' . t('[link path="the backdrop path"]link text[/link]') . '</strong>';
+  $output[] = t('Inserts aliased Backdrop path around the link text.');
   if ($long) {
     $output[] = '<p>';
     $output[] = t('If you omit the text and the closing [/link] tag, you get back the URL only.') . '</p>';

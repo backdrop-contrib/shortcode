@@ -12,13 +12,13 @@
  * the all defined and altered ShortCode definitions.
  */
 function shortcode_list_all($reset = FALSE) {
-  $shortcodes = &drupal_static(__FUNCTION__);
+  $shortcodes = &backdrop_static(__FUNCTION__);
 
   if (!isset($shortcodes) || $reset) {
     $shortcodes = module_invoke_all('shortcode_info');
 
     // Allow alteration of the ShortCodes.
-    drupal_alter('shortcode_info', $shortcodes);
+    backdrop_alter('shortcode_info', $shortcodes);
   }
 
   return $shortcodes;
@@ -32,7 +32,7 @@ function shortcode_list_all_enabled($format, $reset = FALSE) {
     $format = filter_format_load($format);
   }
 
-  $shortcodes_enabled = &drupal_static(__FUNCTION__, array());
+  $shortcodes_enabled = &backdrop_static(__FUNCTION__, array());
 
   if (isset($shortcodes_enabled[$format->format]) && !$reset) {
     return $shortcodes_enabled[$format->format];
@@ -154,7 +154,7 @@ function _shortcode_settings_form($form, &$form_state, $filter, $format, $defaul
  *   The enabled ShortCodes array for the input format.
  */
 function _shortcode_get_shortcodes($filter) {
-  $shortcodes_enabled = &drupal_static(__FUNCTION__, array());
+  $shortcodes_enabled = &backdrop_static(__FUNCTION__, array());
 
   if (!isset($shortcodes_enabled[$filter->format])) {
     $shortcodes_enabled[$filter->format] = array();
