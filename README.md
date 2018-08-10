@@ -21,9 +21,9 @@ Credits
 Ported to Backdrop CMS by Kevin Crafts(https://github.com/kevincrafts).
 
 Originally written/maintained for Drupal by 
--- Denes.Szabo (https://www.drupal.org/u/denesszabo)
--- sthomps5 (https://www.drupal.org/u/sthomps5)
--- squall3d (https://www.drupal.org/u/squall3d)
+- Denes.Szabo (https://www.drupal.org/u/denesszabo)
+- sthomps5 (https://www.drupal.org/u/sthomps5)
+- squall3d (https://www.drupal.org/u/squall3d)
 
 License
 -------
