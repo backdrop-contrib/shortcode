@@ -18,7 +18,7 @@ Current Maintainers
 Credits
 -------
 
-Ported to Backdrop CMS by Kevin Crafts(https://github.com/kevincrafts).
+Ported to Backdrop CMS by Kevin Crafts(https://github.com/kevincrafts). Ported/forked from version 7.x-2.26
 
 Originally written/maintained for Drupal by 
 - Denes.Szabo (https://www.drupal.org/u/denesszabo)
